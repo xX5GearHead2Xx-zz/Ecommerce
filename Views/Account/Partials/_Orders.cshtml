@@ -1,0 +1,43 @@
+﻿@using Ecommerce.Models;
+@model Client
+<div class="tab-pane fade show active" role="tabpanel" id="Orders" aria-labelledby="Orders-Tab">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Order History</h4>
+            @{
+                List<Order> ClientOrders = Model.Orders;
+            }
+
+            @if (ClientOrders.Count == 0)
+            {
+                <p>You have not placed any orders</p>
+            }
+            else
+            {
+                <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>Order Number</td>
+                                <td>Order Date</td>
+                                <td>Order Status</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Order Order in ClientOrders.OrderByDescending(O => O.DateTime))
+                            {
+                                <tr>
+                                    <td>@Order.Number</td>
+                                    <td>@Order.DateTime</td>
+                                    <td>@Order.OrderStatus.ToString()</td>
+                                    <td> @Html.ActionLink("View", "ViewOrder", "Account", new { @OrderID = Order.Key.Encrypt() }, new { @class = "btn btn-primary btn-sm shadow w-100" })</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

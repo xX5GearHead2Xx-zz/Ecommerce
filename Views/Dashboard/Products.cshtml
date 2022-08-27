@@ -1,0 +1,179 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}<div style="height:50px"></div>
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">Products</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                @using (Html.BeginForm("Search", "Product", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="HiddenPageNumber" value="@ViewBag.CurrentPage" />
+                                    <input type="hidden" name="HiddenResultsPerPage" value="@ViewBag.ResultsPerPage" />
+                                    @Html.AntiForgeryToken()
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-2 mt-1">
+                                                <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                                    @Html.DropDownList("ResultsPerPage", new SelectList(ViewBag.ResultsPerPageSelection, "Value", "Text"), new { @class = "form-control form-control-sm custom-select custom-select-sm",@onchange="this.form.submit()" })
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-1">
+                                                <input name="Search" value="@ViewBag.SearchQuery" type="search" class="form-control form-control-sm w-100" aria-controls="dataTable" placeholder="Search Client Email">
+                                            </div>
+                                            <div class="col-md-3 mt-1">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
+                                            </div>
+                                            <div class="col-md-3 mt-1">
+                                                @Html.ActionLink("Create Product", "CreateProduct", "Product", null, new { @Class="btn btn-primary btn-sm w-100"})
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                            <table class="table dataTable my-0" id="dataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Price</th>
+                                                        <th>Quantity</th>
+                                                        <th>Featured</th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (Product Product in Model)
+                                                    {
+                                                        <tr>
+                                                            <td>@Product.Name</td>
+                                                            <td>@Product.Price</td>
+                                                            <td>@Product.Quantity</td>
+                                                            <td>@(Product.Featured ? "Yes" : "No")</td>
+                                                            <td>@Html.ActionLink("Edit", "EditProduct", "Product", new { @ProductID = Product.Key }, new { @class = "btn btn-primary btn-sm w-100" })</td>
+                                                            <td>@Html.ActionLink(Product.Hidden ? "Unhide" : "Hide", "HideUnhide", "Product", new { @ProductID = Product.Key, @MarkAsHidden = !Product.Hidden }, new { @class = "btn btn-dark btn-sm w-100" })</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 align-self-center">
+                                            </div>
+                                            <div class="col-md-6">
+                                                @if (ViewBag.PageCount > 1)
+                                                {
+                                                    int PageNumber = 0;
+                                                    <nav>
+                                                        <ul class="pagination">
+                                                            @if (ViewBag.CurrentPage - 3 > 0)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage - 3).ToString();
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+                                                            @if (ViewBag.CurrentPage - 2 > 0)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage - 2);
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+                                                            @if (ViewBag.CurrentPage - 1 > 0)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage - 1);
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+                                                            @{
+                                                                PageNumber = ViewBag.CurrentPage;
+                                                            }
+                                                            <li class="page-item active">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            @if (ViewBag.CurrentPage + 1 <= ViewBag.PageCount)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage + 1);
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+                                                            @if (ViewBag.CurrentPage + 2 <= ViewBag.PageCount)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage + 2);
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+                                                            @if (ViewBag.CurrentPage + 3 <= ViewBag.PageCount)
+                                                            {
+                                                                PageNumber = (ViewBag.CurrentPage + 3);
+                                                                <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Product", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @SearchQuery = ViewBag.SearchQuery }, new { @class = "page-link" })</li>
+                                                            }
+
+                                                        </ul>
+                                                    </nav>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+<script src="~/js/jquery.min.js"></script>
+<script>
+    $("#ImageOne").change(function() {
+        readURL(this, "#ImageOnePreview");
+    });
+    $("#ImageTwo").change(function() {
+        readURL(this, "#ImageTwoPreview");
+    });
+    $("#ImageThree").change(function() {
+        readURL(this, "#ImageThreePreview");
+    });
+    $("#ImageFour").change(function() {
+        readURL(this, "#ImageFourPreview");
+    });
+    function readURL(input, PreviewName) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $(PreviewName).attr('src', e.target.result);
+                $(PreviewName).attr('style', 'min-height:100px;min-height:100px;max-height:100px;max-width:100px;');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function AddSpecification() {
+        var CurrentCount = parseInt($("#SpecificationCount").val());
+        CurrentCount++;
+        $("#SpecificationCount").val(CurrentCount);
+        $("#ProductSpecifications").append(
+            "<div class='row' id='SpecificationRow_" + CurrentCount + "'>" +
+            "<div class='col-md-6'>" +
+            "<div class='form-group'>" +
+            "<label>Specification name</label>" +
+            "<input type='text' class='form-control' name='SpecificationName_" + CurrentCount + "' placeholder='Name' required />" +
+            "</div>" +
+            "</div>" +
+            "<div class='col-md-6'>" +
+            "<div class='form-group'>" +
+            "<label>Specification Description</label>" +
+            "<input type='text' class='form-control' name='SPecificationDescription_" + CurrentCount + "' placeholder='Description' required />" +
+            "</div>" +
+            "</div>" +
+            "</div>")
+    }
+
+    function RemoveSpecification() {
+        var CurrentCount = parseInt($("#SpecificationCount").val());
+        var RowID = "#SpecificationRow_" + CurrentCount;
+        $(RowID).remove();
+        CurrentCount--;
+        $("#SpecificationCount").val(CurrentCount);
+    }
+</script>

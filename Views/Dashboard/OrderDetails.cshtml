@@ -1,0 +1,111 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Order Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="height:50px"></div>
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container">
+                    <div class="card shadow">
+                        @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+                        @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">Order #@Model.Number</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h3>Order Details</h3>
+                                    <div class="mb-2 p-2">
+                                        <p><b>Status</b> @Model.OrderStatus</p>
+                                        <p><button type="button" class="btn btn-primary btn-sm shadow w-100" data-toggle="modal" data-target="#UpdateOrderStatus">Change Order Status</button></p>
+                                        <p><b>Date</b> @Model.DateTime</p>
+                                        <p>@Html.ActionLink("View Client Details", "ViewDetails", "Client", new { @ClientID = @Model.ClientID }, new { @class = "btn btn-primary btn-sm shadow w-100" })</p>
+                                    </div>
+
+                                    <div class="modal fade" id="UpdateOrderStatus">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                @using (Html.BeginForm("UpdateOrderStatus", "Order", FormMethod.Post))
+                                                {
+                                                    <input type="hidden" name="OrderID" value="@Model.Key" />
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title">Update Order Status</h4>
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                                            <label>
+                                                                Status&nbsp;
+                                                                @Html.DropDownList("OrderStatus", new SelectList(ViewBag.OrderStatusOptions, "Value", "Text"), new { @class = "form-control form-control-sm custom-select custom-select-sm" })
+                                                                &nbsp;
+                                                            </label>
+                                                        </div>
+                                                        <p>When an order is cancelled, all items on the order will be put back into inventory.</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Update</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-3">
+                                    <h3>Delivery Address</h3>
+                                    @{
+                                        Address DeliveryAddress = Model.DeliveryAddress;
+                                    }
+                                    <div class="mb-2 p-2">
+                                        <p><b>Address</b> @DeliveryAddress.AddressLine</p>
+                                        <p><b>Suburb</b> @DeliveryAddress.Suburb</p>
+                                        <p><b>City</b> @DeliveryAddress.City</p>
+                                        <p><b>Province</b> @DeliveryAddress.Province</p>
+                                        <p><b>Country</b> @DeliveryAddress.Country</p>
+                                        <p><b>Postal Code</b> @DeliveryAddress.ZipCode</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h3>Order Items</h3>
+                                    <div class="table-responsive">
+                                        <table class="table dataTable my-0">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Item Name</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price per item</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (OrderProductLink OrderProductLink in Model.OrderProductLinks)
+                                                {
+                                                    <tr>
+                                                        @{
+                                                            Product Product = OrderProductLink.Product;
+                                                        }
+                                                        <td><img style="max-height:50px" class="img-fluid d-block mx-auto" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))"></td>
+                                                        <td>@Product.Name</td>
+                                                        <td>@OrderProductLink.Quantity</td>
+                                                        <td>@OrderProductLink.ItemPrice</td>
+                                                        <td>@(OrderProductLink.ItemPrice * OrderProductLink.Quantity)</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

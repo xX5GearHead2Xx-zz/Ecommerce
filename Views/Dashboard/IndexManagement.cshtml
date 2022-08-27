@@ -1,0 +1,70 @@
+@model IEnumerable<IndexImage>
+@{
+    ViewData["Title"] = "Index Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="height:50px"></div>
+
+<div class="container">
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 font-weight-bold">Index Management</p>
+        </div>
+        <div class="card-body">
+            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+            @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+            <h4>Featured Images</h4>
+            @foreach (IndexImage IndexImage in Model)
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Image</label>
+                            <img src="data:image/bmp;base64,@Convert.ToBase64String(IndexImage.Data)" id="Image1Preview" style="height:150px;" class="img-fluid m-2" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>URL</label>
+                            <p><a href="@IndexImage.URL">@IndexImage.URL</a></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label></label>
+                            @Html.ActionLink("Delete", "RemoveIndexImage", "Home", new {@IndexImageID = IndexImage.Key}, new {@class = "btn btn-sm btn-danger w-100 form-control mt-2" } )
+                        </div>
+                    </div>
+                </div>
+            }
+            <hr />
+            @using (Html.BeginForm("AddIndexImage", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Image</label>
+                            <input type="file" name="Image" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>URL</label>
+                            <input type="text" name="URL" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label></label>
+                            <button type="submit" class="btn btn-sm btn-primary w-100 form-control mt-2">Add</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+

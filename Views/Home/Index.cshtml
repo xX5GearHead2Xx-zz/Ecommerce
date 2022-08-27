@@ -1,0 +1,123 @@
+﻿@model IEnumerable<IndexImage>
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .carousel .carousel-indicators li {
+        background-color: gray;
+    }
+
+        .carousel .carousel-indicators li.active {
+            background-color: black;
+        }
+</style>
+<body>
+    <div style="height:50px"></div>
+    <main class="page landing-page">
+        @if (Model.Count() > 0)
+        {
+            <section class="slider dark">
+                <div class="carousel slide" data-ride="carousel" id="carousel-1">
+                    <div class="carousel-inner text-center" role="listbox">
+                        @{
+                            int ImageCount = 0;
+                        }
+                        @foreach (IndexImage Image in Model)
+                        {
+                            if (ImageCount == 0)
+                            {
+                                <div class="carousel-item active">
+                                    <a href="@Image.URL" target="_blank">
+                                        <img height="400" class="w-100" src="data:image/png;base64, @(Convert.ToBase64String(Image.Data))" alt="Slide Image">
+                                    </a>
+                                </div>
+                                ImageCount++;
+                            }
+                            else
+                            {
+                                <div class="carousel-item">
+                                    <a href="@Image.URL" target="_blank">
+                                        <img height="400" class="w-100" src="data:image/png;base64, @(Convert.ToBase64String(Image.Data))" alt="Slide Image">
+                                    </a>
+                                </div>
+                                ImageCount++;
+                            }
+                        }
+                    </div>
+                    <div style="height:50px"></div>
+                    <ol class="carousel-indicators">
+                        @{
+                            ImageCount = 0;
+                        }
+                        @foreach (IndexImage Image in Model)
+                        {
+                            if (ImageCount == 0)
+                            {
+                                <li data-target="#carousel-1" data-slide-to="@ImageCount" class="active"></li>
+                                ImageCount++;
+                            }
+                            else
+                            {
+                                <li style="color:black" data-target="#carousel-1" data-slide-to="@ImageCount"></li>
+                                ImageCount++;
+                            }
+                        }
+                    </ol>
+                </div>
+            </section>
+        }
+        <div class="container">
+            <h1>Featured Products</h1>
+            <div class="products">
+                @using (Html.BeginForm("Search", "Shop", new { CategoryID = "", OldPageNumber = 1, ResultsPerPage = 10 }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-md-8 p-sm-1">
+                            <label class="d-sm-none d-md-block">&nbsp;</label>
+                            <input name="Search" type="search" class="form-control form-control-sm w-100 ProductSearch" aria-controls="dataTable" placeholder="Search..." autocomplete="off">
+                            <div id="ProductSearchResults">
+                            </div>
+                        </div>
+                        <div class="col-md-4 p-sm-1">
+                            <label class="d-sm-none d-md-block">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
+                        </div>
+                    </div>
+                }
+                <div class="row no-gutters">
+                    @{
+                        List<Product> FeaturedProducts = ViewBag.FeaturedProducts;
+                    }
+                    @if (FeaturedProducts.Count() == 0)
+                    {
+                        <div class="alert alert-info mt-2 w-100">No featured products found</div>
+                    }
+                    @foreach (var Product in FeaturedProducts.OrderBy(P => P.CategoryID))
+                    {
+                        string EncryptedProductID = Product.Key.Encrypt();
+
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="clean-product-item">
+                                <div class="image" style="height:200px;overflow:hidden">
+                                    <a href="@Url.Action("ViewProduct","Shop",new { @ProductID = EncryptedProductID})">
+                                        <img class="img-fluid d-block mx-auto" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))">
+                                    </a>
+                                </div>
+                                <div style=" white-space: nowrap; width: 250px; overflow: hidden; text-overflow: ellipsis; text-align:left" tooltip="@Product.Name">
+                                    @Product.Name
+                                </div>
+                                <div class="about">
+                                    <div class="price">
+                                        R @Product.Price
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </main>
+</body>

@@ -1,0 +1,65 @@
+﻿@model Order;
+@{
+    ViewData["Title"] = "Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page payment-page">
+    <section class="clean-block payment-form dark">
+        <div class="container">
+            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+            <div class="block-heading mt-2">
+                <h2 class="text-info">Order Confirmation</h2>
+            </div>
+            <div class="products">
+                <h3 class="title">Order Summary</h3>
+                <div class="row mt-2">
+                    <div class="col-md-3">
+                        <p class="item font-weight-bold">Delivery Address</p>
+                        <p class="item">
+                            @{
+                                Address OrderAddress = new Address(Model.DeliveryAddressID);
+                            }
+                            @OrderAddress.AddressLine<br />
+                            @OrderAddress.City<br />
+                            @OrderAddress.Province<br />
+                            @OrderAddress.Country<br />
+                            @OrderAddress.ZipCode
+                        </p>
+                    </div>
+                    <div class="col-md-9">
+                        @foreach (OrderProductLink OrderLink in OrderProductLink.Methods.GetProductsLinkedToOrder(Model.Key))
+                        {
+                            Product Product = new Product(OrderLink.ProductID);
+                            <div class="product">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="product-image m-1"><img class="img-fluid d-block image" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))"></div>
+                                    </div>
+                                    <div class="col-md-8 product-info">
+                                        <p class="product-name">@Product.Name</p>
+                                        <span style="font-weight:bold">X @OrderLink.Quantity</span>
+                                        <label class="price">R @Product.Price</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        }
+                        <span>Total</span>
+                        <span class="price">R @ViewBag.OrderTotal</span>
+                    </div>
+                </div>
+                <br />
+                <button class="btn btn-primary btn-sm w-100" type="submit" style="border-radius:0" onclick="PayForm.submit()">Proceed To Secure Payment</button>
+                <form method="post" action="@ViewBag.RedirectUrl" style="display:none" id="PayForm">
+                    @foreach (var Param in (Dictionary<string, string>)ViewBag.RedirectParams)
+                    {
+                        <input type="hidden" name="@Param.Key" value="@Param.Value" />
+                    }
+
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+

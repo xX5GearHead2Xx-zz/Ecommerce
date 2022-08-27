@@ -1,0 +1,67 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Confirmation";
+}
+
+<main class="page payment-page">
+    <section class="clean-block payment-form dark">
+        <div class="container">
+            <div class="block-heading mt-2">
+                @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+                @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+                @Html.ActionLink("View Order", "GoToOrder", "Payment", new { @OrderID = Model.Key.Encrypt()}, new { @class = "btn btn-sm btn-primary shadow w-100" })
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Order Items</h3>
+                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                            <table class="table dataTable my-0">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (OrderProductLink OrderProductLink in Model.OrderProductLinks)
+                                    {
+                                        <tr>
+                                            @{
+                                                Product Product = OrderProductLink.Product;
+                                            }
+                                            <td><img style="max-height:50px" class="img-fluid d-block mx-auto" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))"></td>
+                                            <td>@Product.Name</td>
+                                            <td>@OrderProductLink.Quantity</td>
+                                            <td>@OrderProductLink.ItemPrice</td>
+                                            <td>@(OrderProductLink.ItemPrice * OrderProductLink.Quantity)</td>
+                                            @{
+                                                bool PreviouslyReviewed = false;
+                                                string ReviewID = "";
+                                            }
+
+                                            @if (Model.OrderStatus == Enums.OrderStatus.Shipped && !PreviouslyReviewed)
+                                            {
+                                                <td>@Html.ActionLink("Review", "WriteReview", "Account", new {@ProductID = Product.Key.Encrypt() }, new {@class="btn btn-primary btn-sm"})</td>
+                                            }
+                                            else if (PreviouslyReviewed)
+                                            {
+                                                <td>@Html.ActionLink("Review", "EditReview", "Account", new { @ReviewID = ReviewID.Encrypt() }, new { @class = "btn btn-primary btn-sm shadow w-100" })</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+

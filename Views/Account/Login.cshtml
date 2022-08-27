@@ -1,0 +1,22 @@
+﻿
+@{ ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+
+<section class="clean-block clean-form dark">
+    <div class="container">
+        <div class="block-heading">
+            <h2 class="text-info">Log In</h2>
+        </div>
+        @using (Html.BeginForm("LogClientIn", "Account", FormMethod.Post))
+        {
+                @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml");
+                @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml");
+                @Html.AntiForgeryToken()
+                <div class="form-group"><label for="email">Email</label><input class="form-control item" type="email" name="Email" required></div>
+                <div class="form-group"><label for="password">Password</label><input class="form-control" type="password" name="Password" required></div>
+                @await Html.PartialAsync("~/Views/Shared/Recaptcha.cshtml");
+                <button class="btn btn-primary btn-block" type="submit">Log In</button>
+                <p class="text-center mt-2">@Html.ActionLink("Recover Password", "RecoverPassword", "Account")</p>
+        }
+          </div>
+ </section>

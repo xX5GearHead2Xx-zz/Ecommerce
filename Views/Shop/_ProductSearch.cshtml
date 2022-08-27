@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Product>
+<ul class="list-group position-absolute w-75" style="z-index:1000">
+    @foreach (Product Product in Model)
+    {
+        <li class="list-group-item" style="cursor:pointer"><a href="@Url.Action("ViewProduct","Shop", new {ProductID = Product.Key.Encrypt()})"> @Product.Name</a><i> in @Product.Category.Description</i></li>
+    }
+</ul>
+
+@if (Model.Count() == 0)
+{
+    <ul class="list-group position-absolute w-75" style="z-index:1000" id="ProductSearchResults">
+        <li class="list-group-item">
+            No Results
+        </li>
+    </ul>
+}

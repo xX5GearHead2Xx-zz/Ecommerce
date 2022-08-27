@@ -1,0 +1,88 @@
+﻿@using Ecommerce.Models;
+@model Client
+<div class="tab-pane fade show active" role="tabpanel" id="Addresses" aria-labelledby="Addresses-Tab">
+    <div class="row">
+          <div class="col-md-7">
+            <h4>Create Address</h4>
+            <hr />
+            @using (Html.BeginForm("AddAddress", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Street & Number</label>
+                            <input type="text" class="form-control" name="AddressLine" maxlength="250" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Suburb</label>
+                            <input type="text" class="form-control" name="Suburb" maxlength="250" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Postal/Zip Code</label>
+                            <input type="number" class="form-control" name="ZipCode" max="10000" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" class="form-control" name="City" maxlength="250" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Province</label>
+                            <input type="text" class="form-control" name="Province" maxlength="250" required />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Country</label>
+                            <input type="text" class="form-control" name="Country" maxlength="250" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-sm btn-primary w-100 mb-3">Add Address</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-5">
+            <h4>Address List</h4>
+            <hr />
+            <div style="max-height:500px" class="overflow-auto">
+                @{
+                    List<Address> ClientAddresses = Model.Addresses;
+                }
+
+                @if (ClientAddresses.Count == 0)
+                {
+                    <p>There are currently no addresses in your address book</p>
+                }
+                else
+                {
+                    @foreach (Address Address in ClientAddresses)
+                    {
+                        <div class="mb-3 border-bottom">
+                            <p>@Address.AddressLine</p>
+                            <p>@Address.Suburb</p>
+                            <p>@Address.City</p>
+                            <p>@Address.Province</p>
+                            <p>@Address.Country</p>
+                            <p>@Address.ZipCode</p>
+                            <p>@Html.ActionLink("Delete", "DeleteAddress", "Account", new { @AddressID = Address.Key.Encrypt() }, new { @class = "btn btn-sm btn-danger w-100" })</p>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

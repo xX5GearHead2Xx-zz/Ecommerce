@@ -1,0 +1,7 @@
+﻿@if (ViewBag.Error != null)
+{
+    @if (ViewBag.Error.ToString() != "")
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+}

@@ -1,0 +1,75 @@
+﻿@model Wishlist
+@{
+    ViewData["Title"] = "Wishlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="height:50px"></div>
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+                            @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+                            <p class="text-primary m-0 font-weight-bold">@Model.Name</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table dataTable my-0">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Item Name</th>
+                                                    <th>Price</th>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{List<WishlistItem> WishlistItems = Model.Items;}
+                                                @foreach (WishlistItem Item in WishlistItems)
+                                                {
+                                                    <tr>
+                                                        @{
+                                                            Product Product = Item.Product;
+                                                        }
+                                                        <td><img style="max-height:50px" class="img-fluid d-block mx-auto" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))"></td>
+                                                        <td>@Product.Name</td>
+                                                        <td>R @Product.Price</td>
+                                                        @if (!Product.Hidden)
+                                                        {
+                                                            <td>@Html.ActionLink("View", "ViewProduct", "Shop", new {@ProductID = Product.Key.Encrypt() }, new {@class="btn btn-primary btn-sm w-100"})</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>Product no longer available</td>
+                                                        }
+                                                        <td>@Html.ActionLink("Remove", "DeleteWishlistItem", "Account", new {@WishlistItemID = Item.Key.Encrypt() }, new {@class="btn btn-danger btn-sm w-100"})</td>
+                                                    </tr>
+                                                }
+                                                @if (WishlistItems.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td colspan="5">
+                                                            <div class="alert alert-info">
+                                                                No items have been added to this wishlist
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

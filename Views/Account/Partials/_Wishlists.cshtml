@@ -1,0 +1,49 @@
+﻿@using Ecommerce.Models;
+@model Client
+<div class="tab-pane fade show active" role="tabpanel" id="Wishlists" aria-labelledby="Wishlists-Tab">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Wishlists</h4>
+            @{
+                List<Wishlist> ClientWishlists = Model.Wishlists;
+            }
+            @using (Html.BeginForm("CreateWishlist", "Account", FormMethod.Post))
+            {
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="Name" placeholder="Name" required>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Create Wishlist</button>
+                    </div>
+                </div>
+            }
+            @if (ClientWishlists.Count == 0)
+            {
+                <p>You have not created any wishlists yet</p>
+            }
+            else
+            {
+                <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>Wishlist Name</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Wishlist Wishlist in ClientWishlists.OrderByDescending(W => W.Name))
+                            {
+                                <tr>
+                                    <td>@Wishlist.Name</td>
+                                    <td> @Html.ActionLink("View", "ViewWishlist", "Account", new { @WishlistID = Wishlist.Key.Encrypt() }, new { @class = "btn btn-primary btn-sm shadow w-100" })</td>
+                                    <td> @Html.ActionLink("Delete", "DeleteWishlist", "Account", new { @WishlistID = Wishlist.Key.Encrypt() }, new { @class = "btn btn-danger btn-sm shadow w-100" })</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

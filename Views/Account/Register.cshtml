@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page registration-page">
+    <section class="clean-block clean-form dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">Register</h2>
+                <p>Fill in your details below.</p>
+            </div>
+            @using (Html.BeginForm("RegisterUser", "Account", FormMethod.Post))
+            {
+                @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml");
+
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control item" type="email" name="Email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input class="form-control item" minlength="6" type="password" name="Password" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Confirm Password</label>
+                    <input class="form-control item" minlength="6" type="password" name="PasswordConfirm" required>
+                </div>
+                @await Html.PartialAsync("~/Views/Shared/Recaptcha.cshtml");
+                <button class="btn btn-primary btn-block" type="submit">Sign Up</button>
+            }
+        </div>
+    </section>
+</main>
+

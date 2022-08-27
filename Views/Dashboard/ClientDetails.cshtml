@@ -1,0 +1,107 @@
+﻿@model Client
+@{
+    ViewData["Title"] = "Client Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="height:50px"></div>
+<body id="page-top">
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container-fluid">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold"><a href="mailto:@Model.Email">@Model.Email</a></p>
+                        </div>
+                        <div class="card-body">
+                            <div class="card text-center w-100">
+                                <div class="card-header">
+                                    <ul class="nav nav-tabs card-header-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" id="Address-Tab" href="#Addresses">Address Book</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" id="Orders-Tab" href="#Orders">Order History</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade show active" role="tabpanel" id="Addresses" aria-labelledby="Addresses-Tab">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <h4>Address List</h4>
+                                                    <hr />
+                                                    <div style="max-height:500px" class="overflow-auto">
+                                                        @{List<Address> ClientAddresses = Model.Addresses;}
+
+                                                        @if (ClientAddresses.Count == 0)
+                                                        {
+                                                            <p>There are currently no addresses in your address book</p>
+                                                        }
+                                                        else
+                                                        {
+                                                            @foreach (Address Address in ClientAddresses)
+                                                            {
+                                                                <div class="border mb-2 bg-light shadow">
+                                                                    <p>@Address.AddressLine</p>
+                                                                    <p>@Address.Suburb</p>
+                                                                    <p>@Address.City</p>
+                                                                    <p>@Address.Province</p>
+                                                                    <p>@Address.Country</p>
+                                                                    <p>@Address.ZipCode</p>
+                                                                    <p>@Html.ActionLink("Delete Address", "DeleteAddress", "Account", new { @AddressID = Address.Key }, new { @class = "btn btn-sm btn-danger w-100" })</p>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade show" role="tabpanel" id="Orders" aria-labelledby="Orders-Tab">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h4>Order History</h4>
+                                                    @{List<Order> ClientOrders = Model.Orders;}
+
+                                                    @if (ClientOrders.Count == 0)
+                                                    {
+                                                        <p>You have not placed any orders</p>
+                                                    }
+                                                    else
+                                                    {
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <td>Order Number</td>
+                                                                    <td>Order Date</td>
+                                                                    <td>Order Status</td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach (Order Order in ClientOrders.OrderByDescending(O => O.DateTime))
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Order.Number</td>
+                                                                        <td>@Order.DateTime</td>
+                                                                        <td>@Order.OrderStatus.ToString()</td>
+                                                                        <td> @Html.ActionLink("View Order", "ViewDetails", "Order", new { @OrderID = Order.Key }, new { @class = "btn btn-primary btn-sm shadow w-100" })</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>

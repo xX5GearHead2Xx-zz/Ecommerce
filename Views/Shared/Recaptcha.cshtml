@@ -1,0 +1,9 @@
+﻿@using Ecommerce 
+<div class="g-recaptcha" data-callback="RecaptchaCallback" data-sitekey="@Ecommerce.Startup.StaticConfiguration["Recaptcha:RecaptchaPublic"]" style="transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;"></div>
+<input type="hidden" id="Captcha" name="Captcha"/>
+<script>
+    function RecaptchaCallback(response) {
+        document.getElementById('Captcha').value = response;
+    }
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

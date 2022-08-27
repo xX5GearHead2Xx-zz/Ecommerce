@@ -1,0 +1,19 @@
+﻿@if(ViewBag.DontShowCookiePrompt == null)
+{
+    <div class="modal fade" id="CookieModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cookie Policy</h5>
+            </div>
+            <div class="modal-body">
+                <p>This site uses cookies, by continuing you agree to our <a href="@Url.Action("CookiePolicy","Legal")">Cookie Policy</a></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm w-100" onclick="AcceptCookies()">Agree and continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js/CookiePrompt.js"></script>
+}

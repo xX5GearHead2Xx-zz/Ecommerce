@@ -1,0 +1,113 @@
+﻿@model Client
+@using Ecommerce.Models;
+@{
+    ViewData["Title"] = "Account Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page shopping-cart-page">
+    <section class="clean-block clean-cart dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">Account Details</h2>
+            </div>
+            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+            @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+            <div class="content">
+                <div class="row no-gutters">
+                    <div class="card text-center w-100">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                @if (ViewBag.Section == Enums.AccountSection.Addresses)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="Address-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Addresses})">Address Book</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="Address-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Addresses})">Address Book</a>
+                                    </li>
+                                }
+                                @if (ViewBag.Section == Enums.AccountSection.Orders)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="Orders-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Orders})">Order History</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="Orders-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Orders})">Order History</a>
+                                    </li>
+                                }
+                                @if (ViewBag.Section == Enums.AccountSection.Reviews)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="Reviews-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Reviews})">Reviews</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="Reviews-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Reviews})">Reviews</a>
+                                    </li>
+                                }
+                                @if (ViewBag.Section == Enums.AccountSection.Wishlists)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="Wishlists-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Wishlists})">Wishlists</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="Wishlists-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Wishlists})">Wishlists</a>
+                                    </li>
+                                }
+                                @if (ViewBag.Section == Enums.AccountSection.PersonalDetails)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="Details-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.PersonalDetails})">Personal Details</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="Details-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.PersonalDetails})">Personal Details</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content" id="nav-tabContent">
+
+                                @switch (ViewBag.Section)
+                                {
+                                    case Enums.AccountSection.Addresses:
+                                        @await Html.PartialAsync("~/Views/Account/Partials/_Addresses.cshtml", Model)
+                                        break;
+                                    case Enums.AccountSection.Orders:
+                                        @await Html.PartialAsync("~/Views/Account/Partials/_Orders.cshtml", Model)
+                                        break;
+                                    case Enums.AccountSection.PersonalDetails:
+                                        @await Html.PartialAsync("~/Views/Account/Partials/_PersonalDetails.cshtml", Model)
+                                        break;
+                                    case Enums.AccountSection.Reviews:
+                                        @await Html.PartialAsync("~/Views/Account/Partials/_Reviews.cshtml", Model)
+                                        break;
+                                    case Enums.AccountSection.Wishlists:
+                                        @await Html.PartialAsync("~/Views/Account/Partials/_Wishlists.cshtml", Model)
+                                        break;
+                                }
+                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+

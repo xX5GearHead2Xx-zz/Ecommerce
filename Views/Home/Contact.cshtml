@@ -1,0 +1,27 @@
+﻿
+@{
+    ViewData["Title"] = "Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page contact-us-page">
+    <section class="clean-block clean-form dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">Contact Us</h2>
+            </div>
+            @using (Html.BeginForm("SendContactEmail", "Home", FormMethod.Post))
+            {
+                @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+                @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+                @Html.AntiForgeryToken()
+                <div class="form-group"><label>Subject</label><input class="form-control" type="text" name="Subject" required></div>
+                <div class="form-group"><label>Email</label><input class="form-control" type="email" name="Email" required></div>
+                <div class="form-group"><label>Message</label><textarea class="form-control" name="Message" required></textarea></div>
+                @await Html.PartialAsync("~/Views/Shared/Recaptcha.cshtml");
+                <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Send</button></div>
+            }
+        </div>
+    </section>
+</main>
+

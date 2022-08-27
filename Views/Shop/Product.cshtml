@@ -1,0 +1,223 @@
+﻿@model Product
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Review> ProductReviews = Model.Reviews;
+    List<ProductSpecification> ProductSpecs = Model.Specifications;
+}
+<style>
+    .carousel .carousel-indicators li {
+        background-color: gray;
+    }
+
+        .carousel .carousel-indicators li.active {
+            background-color: black;
+        }
+</style>
+<main class="page product-page">
+    <section class="clean-block clean-product dark">
+        <div style="height:100px"></div>
+        <div class="container">
+            <div class="block-content">
+                <div class="product-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="carousel slide" data-ride="carousel" id="carousel-1">
+                                <div class="carousel-inner">
+                                    @{
+                                        int ImageCount = 0;
+                                    }
+                                    @foreach (var Image in Model.Images)
+                                    {
+                                        if (ImageCount == 0)
+                                        {
+                                            <div class="carousel-item active">
+                                                <img class="d-block ml-auto mr-auto" src="data:image/png;base64, @Convert.ToBase64String(Image.Data)" style="height:250px;">
+                                            </div>
+                                            ImageCount++;
+                                        }
+                                        else
+                                        {
+                                            <div class="carousel-item">
+                                                <img class="d-block ml-auto mr-auto" src="data:image/png;base64, @Convert.ToBase64String(Image.Data)" style="height:250px;">
+                                            </div>
+                                            ImageCount++;
+                                        }
+                                    }
+                                </div>
+                                <div style="height:50px"></div>
+                                <ol class="carousel-indicators">
+                                    @{
+                                        ImageCount = 0;
+                                    }
+                                    @foreach (ProductImage Image in Model.Images)
+                                    {
+                                        if (ImageCount == 0)
+                                        {
+                                            <li data-target="#carousel-1" data-slide-to="@ImageCount" class="active"></li>
+                                            ImageCount++;
+                                        }
+                                        else
+                                        {
+                                            <li style="color:black" data-target="#carousel-1" data-slide-to="@ImageCount"></li>
+                                            ImageCount++;
+                                        }
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info">
+                                <h3>@Model.Name</h3>
+                                <div class="price">
+                                    <h3>R @Model.Price</h3>
+                                </div>
+                                @using (Html.BeginForm("AddToCart", "Cart", new { @ProductID = Model.Key.Encrypt() }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="row">
+                                        <div class="col-md-4 col-sm-6 col-xs-6">
+                                            <div class="form-group">
+                                                <label>Quantity</label>
+                                                <input class="form-control" value="1" type="number" min="1" max="@Model.Quantity" name="Quantity" required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8 col-sm-6 col-xs-6">
+                                            <br />
+
+                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                @if (Model.Quantity > 0)
+                                                {
+                                                    <button class="btn btn-primary w-100 btn-sm" type="submit">Add to Cart</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" class="btn btn-danger w-100 btn-sm">Out of Stock</button>
+                                                }
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Wishlist
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                        @if (ViewBag.ClientID != null)
+                                                        {
+                                                            List<Wishlist> ClientWishlists = new Client(ViewBag.ClientID).Wishlists;
+                                                            @if (ClientWishlists.Count == 0)
+                                                            {
+                                                                <a class="dropdown-item" href="@Url.Action("Manage","Account", new {@Section = Enums.AccountSection.Wishlists})">Create a wishlist</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                @foreach (Wishlist wishlist in ClientWishlists)
+                                                                {
+                                                                    <a class="dropdown-item" href="@Url.Action("AddToWishlist","Account",new {@ProductID = Model.Key.Encrypt(), @WishlistID = wishlist.Key.Encrypt()})">@wishlist.Name</a>
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="dropdown-item" href="@Url.Action("Login","Account")">Log In</a>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <p>@Model.Quantity In Stock</p>
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="summary">
+                                    <p>
+                                        @Model.Description
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <ul class="nav nav-tabs" id="myTab">
+                            <li class="nav-item"><a class="nav-link active" role="tab" data-toggle="tab" id="Specifications-Tab" href="#specifications">Specifications</a></li>
+                            <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" id="Reviews-Tab" href="#reviews">Reviews (@ProductReviews.Count())</a></li>
+                        </ul>
+                        <div class="tab-content" id="content">
+                            <div class="tab-pane active fade show" role="tabpanel" id="specifications">
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="stat">Brand</td>
+                                                <td>@Model.Brand</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="stat">Color</td>
+                                                <td>@Model.Color</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="stat">Weight (grams)</td>
+                                                <td>@Model.Weight</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="stat">Dimensions (millimeters)</td>
+                                                <td>@Model.Height (Height) X @Model.Width (Width) X @Model.Depth (Depth)</td>
+                                            </tr>
+                                            @if (ProductSpecs.Count() > 0)
+                                            {
+                                                @foreach (var Specification in ProductSpecs)
+                                                {
+                                                    <tr>
+                                                        <td class="stat">@Specification.Description</td>
+                                                        <td>@Specification.Value</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="2">No specifications available for this product</td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show" role="tabpanel" id="reviews">
+
+                                @if (ProductReviews.Count() > 0)
+                                {
+                                    @foreach (var Review in ProductReviews)
+                                    {
+                                        <div class="card shadow mt-2">
+                                            <div class="card-header">@Review.Title</div>
+
+                                            <div class="card-body">@Review.Description</div>
+                                            <div class="card-footer">
+                                                @{
+                                                    int Rate = Review.Rating;
+                                                }
+                                                @while (Rate > 0)
+                                                {
+                                                    Rate--;
+                                                    <i class="icon-star"></i>
+                                                }
+                                            </div>
+                                        </div>
+                                        <hr />
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+

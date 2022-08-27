@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page shopping-cart-page">
+    <section class="clean-block clean-cart dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">Shopping Cart</h2>
+            </div>
+            <div class="content">
+                <div class="row no-gutters">
+                    <div class="col-md-12 col-lg-9">
+                        <div class="mt-5 mr-5 ml-5">
+                            @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+                            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
+                            @if (Model.Count() == 0)
+                            {
+                                <div class="alert alert-info">There are no items in your cart, @Html.ActionLink("Click here to start shopping", "ViewProducts", "Shop")</div>
+                            }
+                        </div>
+
+                        @foreach (var Product in Model.OrderBy(P => P.Name))
+                        {
+                            string EncryptedProductID = Product.Key.Encrypt();
+                            <div class="items">
+                                <div class="product">
+                                    <a href="@Url.Action("RemoveFromCart", "Cart", new { @ProductID = EncryptedProductID})">
+                                        <i class="fa fa-trash-alt" style="float:right;cursor:pointer;"></i>
+                                    </a>
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col-md-3">
+                                            <div class="product-image"><img class="img-fluid d-block mx-auto image" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))"></div>
+                                        </div>
+                                        <div class="col-md-4 product-info">
+
+                                            <a class="product-name" href="@Url.Action("ViewProduct", "Shop", new { @ProductID = EncryptedProductID }, null)">@Product.Name</a>
+                                            <div class="product-specs">
+                                                @foreach (var ProductSpec in Product.Specifications)
+                                                {
+                                                    <div><span>@ProductSpec.Description:&nbsp;</span><span class="value">@ProductSpec.Value</span></div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 col-md-2 quantity">
+                                            <label class="d-none d-md-block" for="quantity">Quantity</label>
+                                            @using (Html.BeginForm("AddToCart", "Cart", new { ProductID = EncryptedProductID }, FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <input type="number" class="form-control quantity-input w-100" name="Quantity" value="@Product.CartQuantity" min="1" max="@Product.Quantity">
+                                                <button type="submit" class="btn btn-sm btn-primary w-100 mt-2" style="border-radius:0">Update</button>
+                                            }
+                                        </div>
+                                        <div class="col-6 col-md-3 price"><span>R @Product.Price</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-md-12 col-lg-3">
+                        <div class="summary">
+                            @if (Model.Count() > 0)
+                            {
+                                <h3>Summary</h3>
+                                <h4><span class="text">VAT</span><span class="price">R @ViewBag.VAT</span></h4>
+                                <h4><span class="text">Total</span><span class="price">R @ViewBag.CartTotal</span></h4>
+                                @Html.ActionLink("Proceed To Checkout", "ProceedToCheckout", "Payment", null, new { @class = "btn btn-primary btn-block btn-sm", @style = "border-radius:0" })
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+

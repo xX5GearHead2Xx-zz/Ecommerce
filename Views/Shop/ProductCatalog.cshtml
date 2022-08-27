@@ -1,0 +1,165 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Catalog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<ProductDepartment> Departments = (List<ProductDepartment>)ViewBag.DepartmentsAndCategories;
+}
+<main class="page catalog-page">
+    <section class="clean-block clean-catalog dark">
+
+        <div class="block-heading">
+            <h2 class="text-info">Catalog</h2>
+            <h4>@(ViewBag.CategoryName == null ? "Featured" : ViewBag.DepartmentName + " - " + ViewBag.CategoryName)</h4>
+        </div>
+        <div class="content container">
+            <div class="row">
+                <div class="col-md-12 d-md-none">
+                    <button class="btn btn-primary w-100 mt-2 mb-2 btn-sm" type="button" data-toggle="collapse" data-target="#TopCollapse" aria-expanded="false" aria-controls="TopCollapse">
+                        Shop by category <i class="icon-arrow-down mt-1"></i>
+                    </button>
+                    <div class="collapse mr-2 ml-2 mt-1" id="TopCollapse">
+                        @foreach (var Department in Departments)
+                        {
+                            <button class="btn btn-sm btn-dark w-100 mr-auto ml-auto mt-1 mb-1" type="button" data-toggle="collapse" data-target="#DepartmentCollapse_@Department.Description.Replace(" ","")" aria-expanded="false" aria-controls="DepartmentCollapse_@Department.Description.Replace(" ","")">@Department.Description <i class="icon-arrow-down mt-1"></i></button>
+                            <div class="collapse" id="DepartmentCollapse_@Department.Description.Replace(" ","")" data-parent="#TopCollapse">
+                                <div class="btn-group-vertical w-100">
+                                    @foreach (var Category in Department.ProductCategories.OrderBy(C => C.Description))
+                                    {
+                                        @Html.ActionLink(Category.Description, "ViewProducts", "Shop", new { @PageNumber = 1, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = Category.Key.Encrypt() }, new { @Class = "btn btn-sm btn-link w-100 mt-1 mb-1" })
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-none d-md-block">
+                        <div class="filters">
+                            <div class="filter-item">
+                                <div id="accordion">
+                                    @foreach (var Department in Departments)
+                                    {
+                                        <div class="card shadow-sm mb-1">
+                                            <div class="card-header" id="heading_@Department.Description.Replace(" ","")">
+                                                <h5 class="mb-0">
+                                                    <button type="button" class="btn btn-light w-100" data-toggle="collapse" data-target="#collapse_@Department.Description.Replace(" ","")" aria-controls="collapse_@Department.Description.Replace(" ","")">
+                                                        @Department.Description
+                                                    </button>
+                                                </h5>
+                                            </div>
+
+                                            <div id="collapse_@Department.Description.Replace(" ","")" class="collapse" aria-labelledby="heading_@Department.Description.Replace(" ","")" data-parent="#accordion">
+                                                <div class="card-body">
+                                                    @foreach (var Category in Department.ProductCategories.OrderBy(C => C.Description))
+                                                    {
+                                                        @Html.ActionLink(Category.Description, "ViewProducts", "Shop", new { @PageNumber = 1, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = Category.Key.Encrypt() }, new { @Class = "btn btn-sm btn-link w-100" })
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    @using (Html.BeginForm("Search", "Shop", new { @CategoryID = ViewBag.CategoryID, OldPageNumber = ViewBag.CurrentPage, ResultsPerPage = ViewBag.ResultsPerPage }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-8 p-sm-1">
+                                <label class="d-sm-none d-md-block">&nbsp;</label>
+                                <input name="Search" value="@ViewBag.SearchQuery" type="search" class="form-control form-control-sm w-100 ProductSearch" aria-controls="dataTable" placeholder="Search..." autocomplete="off">
+                                <div id="ProductSearchResults">
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-2 p-sm-1">
+                                <label class="d-sm-none d-md-block">&nbsp;</label>
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
+                            </div>
+                            <div class="col-md-2 p-sm-1">
+                                <label class="d-sm-none d-md-block">&nbsp;</label>
+                                @Html.DropDownList("ResultsPerPage", new SelectList(ViewBag.ResultsPerPageSelection, "Value", "Text"), new { @class = "form-control form-control-sm custom-select custom-select-sm", @onchange = "this.form.submit()" })
+                            </div>
+                        </div>
+                    }
+                    <div class="products">
+                        <div class="row">
+                            @if (Model.Count() == 0)
+                            {
+                                <div class="alert alert-info m-2 w-100">No products found</div>
+                            }
+                            @foreach (var Product in Model.OrderBy(P => P.Price))
+                            {
+                                string EncryptedProductID = Product.Key.Encrypt();
+
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <div class="clean-product-item">
+                                        <div class="image" style="height:200px;overflow:hidden">
+                                            <a href="@Url.Action("ViewProduct","Shop",new { @ProductID = EncryptedProductID})">
+                                                <img class="img-fluid d-block mx-auto" src="data:image/png;base64, @(Convert.ToBase64String(Product.FeaturedImage.Data))">
+                                            </a>
+                                        </div>
+                                        <div style=" white-space: nowrap; width: 250px; overflow: hidden; text-overflow: ellipsis; text-align:left" tooltip="@Product.Name">
+                                            @Product.Name
+                                        </div>
+                                        <div class="about">
+                                            <div class="price">
+                                                R @Product.Price
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        @if (ViewBag.PageCount > 1)
+                        {
+                            int PageNumber = 0;
+                            <nav>
+                                <ul class="pagination">
+                                    @if (ViewBag.CurrentPage - 3 > 0)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage - 3);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+                                    @if (ViewBag.CurrentPage - 2 > 0)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage - 2);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+                                    @if (ViewBag.CurrentPage - 1 > 0)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage - 1);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+                                    @{
+                                        PageNumber = ViewBag.CurrentPage;
+                                    }
+                                    <li class="page-item active">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    @if (ViewBag.CurrentPage + 1 <= ViewBag.PageCount)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage + 1);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+                                    @if (ViewBag.CurrentPage + 2 <= ViewBag.PageCount)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage + 2);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+                                    @if (ViewBag.CurrentPage + 3 <= ViewBag.PageCount)
+                                    {
+                                        PageNumber = (ViewBag.CurrentPage + 3);
+                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "ViewProducts", "Shop", new { @PageNumber = PageNumber, @ResultsPerPage = ViewBag.ResultsPerPage, @CategoryID = ViewBag.CategoryID }, new { @class = "page-link" })</li>
+                                    }
+
+                                </ul>
+                            </nav>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

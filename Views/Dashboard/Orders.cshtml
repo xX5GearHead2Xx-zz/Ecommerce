@@ -1,0 +1,125 @@
+﻿@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<body id="page-top">
+    <div style="height:50px"></div>
+    <div id="wrapper">
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                <div class="container">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 font-weight-bold">Orders</p>
+                        </div>
+                        @using (Html.BeginForm("Search", "Order", FormMethod.Post))
+                        {
+                            <input type="hidden" name="HiddenResultsPerPage" value="@ViewBag.ResultsPerPage" />
+                            <input type="hidden" name="HiddenPageNumber" value="@ViewBag.CurrentPage" />
+                            @Html.AntiForgeryToken()
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2 mt-1">
+                                        <div class="dataTables_length" aria-controls="dataTable">
+                                            @Html.DropDownList("ResultsPerPage", new SelectList(ViewBag.ResultsPerPageSelection, "Value", "Text"), new { @class = "form-control form-control-sm custom-select custom-select-sm w-100", @onchange = "this.form.submit()" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-1">
+                                        @Html.DropDownList("OrderStatus", new SelectList(ViewBag.OrderStatusOptions, "Value", "Text"), new { @class = "form-control form-control-sm custom-select custom-select-sm w-100", @onchange = "this.form.submit()" })
+                                    </div>
+                                    <div class="col-md-4 mt-1">
+                                        <input name="OrderNumber" value="@ViewBag.OrderNumber" type="search" class="form-control form-control-sm w-100" aria-controls="dataTable" placeholder="Search for an order number">
+                                    </div>
+                                    <div class="col-md-2 col-xs-12 mt-1">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">Search</button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                                    <table class="table dataTable my-0" id="dataTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Number</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Count() > 0)
+                                            {
+                                                @foreach (Order Order in Model)
+                                                {
+                                                    <tr>
+                                                        <td>@Order.Number</td>
+                                                        <td>@Order.OrderStatus</td>
+                                                        <td>@Order.DateTime</td>
+                                                        <td>@Html.ActionLink("View", "ViewDetails", "Order", new { @OrderID = Order.Key }, new { @class = "btn btn-primary btn-sm w-100" })</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="4" class="text-center alert alert-info">No Orders Found</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 align-self-center">
+                                    </div>
+                                    <div class="col-md-6">
+                                        @if (ViewBag.PageCount > 1)
+                                        {
+                                            int PageNumber = 0;
+                                            <nav>
+                                                <ul class="pagination">
+                                                    @if (ViewBag.CurrentPage - 3 > 0)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage - 3);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+                                                    @if (ViewBag.CurrentPage - 2 > 0)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage - 2);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+                                                    @if (ViewBag.CurrentPage - 1 > 0)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage - 1);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+                                                    @{
+                                                        PageNumber = ViewBag.CurrentPage;
+                                                    }
+                                                    <li class="page-item active">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    @if (ViewBag.CurrentPage + 1 <= ViewBag.PageCount)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage + 1);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+                                                    @if (ViewBag.CurrentPage + 2 <= ViewBag.PageCount)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage + 2);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+                                                    @if (ViewBag.CurrentPage + 3 <= ViewBag.PageCount)
+                                                    {
+                                                        PageNumber = (ViewBag.CurrentPage + 3);
+                                                        <li class="page-item">@Html.ActionLink(PageNumber.ToString(), "View", "Order", new { @ResultsPerPage = ViewBag.ResultsPerPage, @PageNumber = PageNumber, @OrderStatus = ViewBag.OrderStatus }, new { @class = "page-link" })</li>
+                                                    }
+
+                                                </ul>
+                                            </nav>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>

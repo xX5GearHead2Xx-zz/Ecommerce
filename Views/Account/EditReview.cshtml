@@ -1,0 +1,53 @@
+﻿@model Review
+@{
+    ViewData["Title"] = "Edit Review";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> RatingOptions = new List<SelectListItem>();
+    RatingOptions.Add(new SelectListItem() { Value = "1", Text = "1 Star", Selected = Model.Rating == 1 ? true : false });
+    RatingOptions.Add(new SelectListItem() { Value = "2", Text = "2 Star", Selected = Model.Rating == 2 ? true : false });
+    RatingOptions.Add(new SelectListItem() { Value = "3", Text = "3 Star", Selected = Model.Rating == 3 ? true : false });
+    RatingOptions.Add(new SelectListItem() { Value = "4", Text = "4 Star", Selected = Model.Rating == 4 ? true : false });
+    RatingOptions.Add(new SelectListItem() { Value = "5", Text = "5 Star", Selected = Model.Rating == 5 ? true : false });
+}
+<div style="height:50px"></div>
+<section class="container">
+    <div class="card">
+        <div class="card-header">
+            <p class="text-primary m-0 font-weight-bold">Edit Review</p>
+        </div>
+        @using (Html.BeginForm("UpdateReview", "Account", new { @ReviewID = Model.Key.Encrypt() }, FormMethod.Post))
+        {
+            <div class="card-body">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-md-10 form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="Title" class="form-control" maxlength="50" value="@Model.Title" required />
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label class="form-label">Rating</label>
+                        @Html.DropDownList("Rating", RatingOptions, new{@class="form-control"})
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="Description" style="height:200px" maxlength="500" placeholder="Tell us about the product..." required>@Model.Description</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">Update Review</button>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
