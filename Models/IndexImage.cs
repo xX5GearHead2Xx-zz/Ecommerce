@@ -36,18 +36,18 @@ namespace Ecommerce.Models
 
         #endregion
 
-        public IndexImage(string Key = "")
+        public IndexImage(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     URL = "";
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

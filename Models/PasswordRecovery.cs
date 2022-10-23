@@ -17,11 +17,11 @@ namespace Ecommerce.Models
         public DateTime ExpiryDate { get; set; }
         #endregion
 
-        public PasswordRecovery(string Key = "")
+        public PasswordRecovery(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     ClientID = "";
@@ -30,7 +30,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

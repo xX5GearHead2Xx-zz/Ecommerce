@@ -25,11 +25,11 @@ namespace Ecommerce.Models
             }
         }
 
-        public OrderProductLink(string Key = "")
+        public OrderProductLink(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     OrderID = "";
@@ -39,7 +39,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

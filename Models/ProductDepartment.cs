@@ -23,18 +23,18 @@ namespace Ecommerce.Models
             }
         }
 
-        public ProductDepartment(string Key = "")
+        public ProductDepartment(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     Description = "";
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

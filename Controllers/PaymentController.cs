@@ -17,15 +17,18 @@ namespace Ecommerce.Controllers
     public class PaymentController : BaseController
     {
         [Authorize(Roles = "Shopper,Admin")]
-        public IActionResult ProceedToCheckout(string PAY_REQUEST_ID = "")
+        public IActionResult ProceedToCheckout()
         {
             List<Address> Addresses = Address.Methods.GetClientAddresses(ClientID);
             return View("~/Views/Checkout/DeliveryMethod.cshtml", Addresses);
         }
 
+        #region "Paygate"
         [ValidateAntiForgeryToken, HttpPost, Authorize(Roles = "Shopper,Admin")]
         public IActionResult ProceedToPayment(IFormCollection Details)
         {
+            Enums.PaymentOption PaymentOption = (Enums.PaymentOption)Convert.ToInt32(Ecommerce.Startup.StaticConfiguration["PaymentSettings:PaymentOption"]);
+
             if (HttpContext.Request.Cookies["Cart"] != null && !string.IsNullOrEmpty(Details["DeliveryAddress"].ToString()))
             {
                 ListDictionary CartItems = JsonConvert.DeserializeObject<ListDictionary>(HttpContext.Request.Cookies["Cart"].ToString());
@@ -40,6 +43,7 @@ namespace Ecommerce.Controllers
                     Order.ClientID = ClientID;
                     Order.DeliveryAddressID = Details["DeliveryAddress"].ToString();
                     Order.OrderStatus = Enums.OrderStatus.Unfinalised;
+                    Order.PaymentOption = PaymentOption;
                     Order.Save();
                     Order = new Order(Order.Key);//load the order so we get the number
 
@@ -65,23 +69,37 @@ namespace Ecommerce.Controllers
                         }
                     }
 
-                    if(RemovedProducts.Count > 0)
+                    if (RemovedProducts.Count > 0)
                     {
                         ViewBag.Error = "Some items have been removed from your order as they are no longer available";
                     }
 
-                    Dictionary<string, string> Response = new PaygateRequest(Convert.ToInt32(OrderTotal), Order.Number.ToString(), Client.Email).InitiateTransaction();
+                    TransactionLog TransactionLog;
+                    switch (PaymentOption)
+                    {
+                        case Enums.PaymentOption.Paygate:
+                            Dictionary<string, string> Response = new PaygateRequest(Convert.ToInt32(OrderTotal), Order.Number.ToString(), Client.Email).InitiateTransaction();
+                            TransactionLog = new TransactionLog();
+                            TransactionLog.PayRequestID = Response.Where(R => R.Key == "PAY_REQUEST_ID").First().Value;
+                            TransactionLog.Checksum = Response.Where(R => R.Key == "CHECKSUM").First().Value;
+                            TransactionLog.OrderID = Order.Key;
+                            TransactionLog.Amount = Convert.ToInt32(OrderTotal * 100);
+                            TransactionLog.ClientID = ClientID;
+                            TransactionLog.Save();
+                            ViewBag.RedirectURL = Startup.StaticConfiguration["PaygateSettings:RedirectURL"].ToString() + "?" + TransactionLog.PayRequestID;
+                            ViewBag.RedirectParams = Response;
+                            break;
+                        case Enums.PaymentOption.Manual:
+                            TransactionLog = new TransactionLog();
+                            TransactionLog.OrderID = Order.Key;
+                            TransactionLog.Amount = Convert.ToInt32(OrderTotal * 100);
+                            TransactionLog.ClientID = ClientID;
+                            TransactionLog.Save();
+                            ViewBag.Success = "Order #" + Order.Number + " Received";
+                            ViewBag.BankDetails = new BankAccountDetails();
+                            return View("~/Views/Checkout/Confirmation.cshtml", Order);
+                    }
 
-                    TransactionLog TransactionLog = new TransactionLog();
-                    TransactionLog.PayRequestID = Response.Where(R => R.Key == "PAY_REQUEST_ID").First().Value;
-                    TransactionLog.Checksum = Response.Where(R => R.Key == "CHECKSUM").First().Value;
-                    TransactionLog.OrderID = Order.Key;
-                    TransactionLog.Amount = Convert.ToInt32(OrderTotal * 100);
-                    TransactionLog.ClientID = ClientID;
-                    TransactionLog.Save();
-
-                    ViewBag.RedirectURL = Startup.StaticConfiguration["PaygateSettings:RedirectURL"].ToString() + "?" + TransactionLog.PayRequestID;
-                    ViewBag.RedirectParams = Response;
                     ViewBag.OrderTotal = OrderTotal;
                     return View("~/Views/Checkout/OrderDetails.cshtml", Order);
                 }
@@ -137,7 +155,7 @@ namespace Ecommerce.Controllers
                     //Email Invoice
                     ViewBag.Order = Order;
 
-                    Task.Run(() => SendEmail("Order Receipt #" + Order.Number, RenderViewToStringAsync(this, "~/Views/EmailTemplates/Invoice.cshtml").ToString(), Client.Email, true));
+                    SendEmail("Order Receipt #" + Order.Number, RenderViewToStringAsync(this, "~/Views/EmailTemplates/Invoice.cshtml"), new List<string> { Client.Email });
 
                     //Clear the shopping cart
                     Response.Cookies.Delete("Cart");
@@ -155,6 +173,7 @@ namespace Ecommerce.Controllers
                 return View("~/Views/Account/AccessDenied.cshtml");
             }
         }
+        #endregion
 
         [AllowAnonymous]
         public IActionResult GoToOrder(string OrderID)

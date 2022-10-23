@@ -14,11 +14,11 @@ namespace Ecommerce.Models
         public string ClientID { get; set; }
         public Enums.ClientRole RoleID { get; set; }
         #endregion
-        public ClientRole(string Key = "")
+        public ClientRole(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     ClientID = "";
@@ -26,7 +26,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

@@ -22,11 +22,11 @@ namespace Ecommerce.Models
             }
         }
 
-        public Wishlist(string Key = "")
+        public Wishlist(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     ClientID = "";
@@ -34,7 +34,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)
@@ -159,7 +159,7 @@ namespace Ecommerce.Models
                 }
                 catch (Exception Ex)
                 {
-                    throw new Exception("Models > Wishlist > GetClientReviews " + Ex.Message);
+                    throw new Exception("Models > Wishlist > GetClientWishlists " + Ex.Message);
                 }
             }
         }

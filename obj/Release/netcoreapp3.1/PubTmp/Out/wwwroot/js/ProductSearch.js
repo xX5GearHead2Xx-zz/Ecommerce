@@ -1,6 +1,10 @@
-﻿$(".ProductSearch").on('keyup blur', function () {
+﻿var previousvalue = "";
+
+$(".ProductSearch").on('keyup blur', function () {
+    //previous value stops the search from searching unecessarily
     var value = $(this).val();
-    if (value.length > 3) {
+    if (value.length > 3 && previousvalue !== value) {
+        previousvalue = value;
         $.ajax({
             url: '/Shop/SearchProducts',
             type: 'GET',
@@ -9,7 +13,6 @@
             },
             dataType: 'html',
             success: function (data) {
-                console.log(data);
                 $("#ProductSearchResults").empty();
                 $("#ProductSearchResults").append(data);
             },

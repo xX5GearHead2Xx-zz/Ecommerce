@@ -20,14 +20,14 @@ namespace Ecommerce.Models
 
         public static string ToDBDate(this DateTime Date)
         {
-            return Date.ToString("yyyy-MM-dd hh:mm:ss");
+            return Date.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static string ToDBDate(this DateTime? Date)
         {
             if(Date.HasValue)
             {
-                return Convert.ToDateTime(Date).ToString("yyyy-MM-dd hh:mm:ss");
+                return Convert.ToDateTime(Date).ToString("yyyy-MM-dd HH:mm:ss");
             }
             else
             {

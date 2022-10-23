@@ -59,19 +59,11 @@ namespace Ecommerce.Models
             }
         }
 
-        public List<Review> Reviews
-        {
-            get
-            {
-                return Review.Methods.GetProductReviews(Key);
-            }
-        }
-
-        public Product(string Key = "")
+        public Product(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     Name = "";
@@ -90,7 +82,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

@@ -81,7 +81,7 @@ namespace Ecommerce.Controllers
                     {
                         ProductSpecification Spec = new ProductSpecification()
                         {
-                            Value = Details["SpecificationDescription_" + SpecificationCount].ToString(),
+                            Value = Details["SpecificationValue_" + SpecificationCount].ToString(),
                             Description = Details["SpecificationName_" + SpecificationCount].ToString(),
                             ProductID = Product.Key,
                         };
@@ -216,15 +216,15 @@ namespace Ecommerce.Controllers
                         if (!string.IsNullOrEmpty(Details["ProductSpecificationID_" + Counter].ToString()))
                         {
                             Specification = new ProductSpecification(Details["ProductSpecificationID_" + Counter].ToString());
-                            Specification.Value = Details["SpecificationName_" + Counter].ToString();
-                            Specification.Description = Details["SpecificationDescription_" + Counter].ToString();
+                            Specification.Value = Details["SpecificationValue_" + Counter].ToString();
+                            Specification.Description = Details["SpecificationName_" + Counter].ToString();
                         }
                         else
                         {
                             Specification = new ProductSpecification()
                             {
-                                Value = Details["SpecificationName_" + Counter].ToString(),
-                                Description = Details["SpecificationDescription_" + Counter].ToString(),
+                                Value = Details["SpecificationValue_" + Counter].ToString(),
+                                Description = Details["SpecificationName_" + Counter].ToString(),
                                 ProductID = ExistingProduct.Key,
                             };
                         }

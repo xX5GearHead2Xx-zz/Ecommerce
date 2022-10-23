@@ -11,7 +11,6 @@ namespace Ecommerce.Models
         {
             NotSet = -1,
             Orders,
-            Reviews,
             Addresses,
             Wishlists,
             PersonalDetails
@@ -43,12 +42,11 @@ namespace Ecommerce.Models
             Shopper
         }
 
-        public enum ReviewStatus
+        public enum PaymentOption
         {
-            NotSet = -1,
-            Pending,
-            Approved,
-            Rejected
+            NotSet=-1,
+            Paygate,
+            Manual
         }
     }
 }

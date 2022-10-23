@@ -9,7 +9,25 @@
             <div class="block-heading mt-2">
                 @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
                 @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
+
+                @if (ViewBag.BankDetails != null)
+                {
+                    BankAccountDetails Details = (BankAccountDetails)ViewBag.BankDetails;
+                    <div class="alert alert-info mt-3">
+                        <p>Please note that your order will only be finalised and shipped once payment has been received</p>
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>Payment Reference:</strong> @Model.Number</li>
+                            <li class="list-group-item"><strong>Bank:</strong> @Details.Bank</li>
+                            <li class="list-group-item"><strong>Account Number:</strong> @Details.AccountNumber</li>
+                            <li class="list-group-item"><strong>Account Type:</strong> @Details.AccountType</li>
+                            <li class="list-group-item"><strong>Branch Code:</strong> @Details.BranchCode</li>
+                            <li class="list-group-item"><strong>Swift Code:</strong> @Details.SwiftCode</li>
+                        </ul>
+                    </div>
+                }
+
                 @Html.ActionLink("View Order", "GoToOrder", "Payment", new { @OrderID = Model.Key.Encrypt()}, new { @class = "btn btn-sm btn-primary shadow w-100" })
+
                 <div class="row">
                     <div class="col-md-12">
                         <h3>Order Items</h3>

@@ -40,14 +40,6 @@ namespace Ecommerce.Models
             }
         }
 
-        public List<Review> Reviews
-        {
-            get
-            {
-                return Review.Methods.GetClientReviews(Key);
-            }
-        }
-
         public List<Wishlist> Wishlists
         {
             get
@@ -56,11 +48,11 @@ namespace Ecommerce.Models
             }
         }
 
-        public Client(string Key = "")
+        public Client(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     Email = "";
@@ -68,7 +60,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

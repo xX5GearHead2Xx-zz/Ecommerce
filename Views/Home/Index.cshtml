@@ -68,7 +68,6 @@
             </section>
         }
         <div class="container">
-            <h1>Featured Products</h1>
             <div class="products">
                 @using (Html.BeginForm("Search", "Shop", new { CategoryID = "", OldPageNumber = 1, ResultsPerPage = 10 }, FormMethod.Post))
                 {
@@ -86,7 +85,7 @@
                         </div>
                     </div>
                 }
-                <div class="row no-gutters">
+                <div class="row">
                     @{
                         List<Product> FeaturedProducts = ViewBag.FeaturedProducts;
                     }

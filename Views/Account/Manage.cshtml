@@ -42,18 +42,6 @@
                                         <a class="nav-link" id="Orders-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Orders})">Order History</a>
                                     </li>
                                 }
-                                @if (ViewBag.Section == Enums.AccountSection.Reviews)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="Reviews-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Reviews})">Reviews</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="Reviews-Tab" href="@Url.Action("ViewSection", "Account", new {Section = Enums.AccountSection.Reviews})">Reviews</a>
-                                    </li>
-                                }
                                 @if (ViewBag.Section == Enums.AccountSection.Wishlists)
                                 {
                                     <li class="nav-item">
@@ -93,9 +81,6 @@
                                         break;
                                     case Enums.AccountSection.PersonalDetails:
                                         @await Html.PartialAsync("~/Views/Account/Partials/_PersonalDetails.cshtml", Model)
-                                        break;
-                                    case Enums.AccountSection.Reviews:
-                                        @await Html.PartialAsync("~/Views/Account/Partials/_Reviews.cshtml", Model)
                                         break;
                                     case Enums.AccountSection.Wishlists:
                                         @await Html.PartialAsync("~/Views/Account/Partials/_Wishlists.cshtml", Model)

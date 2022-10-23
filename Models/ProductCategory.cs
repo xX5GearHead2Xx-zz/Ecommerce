@@ -16,11 +16,11 @@ namespace Ecommerce.Models
         public bool Hidden { get; set; }
         #endregion
 
-        public ProductCategory(string Key = "")
+        public ProductCategory(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     Description = "";
@@ -29,7 +29,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

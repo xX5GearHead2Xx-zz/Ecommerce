@@ -17,6 +17,7 @@ namespace Ecommerce.Models
         public OrderStatus OrderStatus { get; set; }
         public string DeliveryAddressID { get; set; }
         public int Number { get; set; }
+        public PaymentOption PaymentOption { get; set; }
         #endregion
 
         public List<OrderProductLink> OrderProductLinks
@@ -36,11 +37,11 @@ namespace Ecommerce.Models
         }
 
 
-        public Order(string Key = "")
+        public Order(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     ClientID = "";
@@ -48,10 +49,11 @@ namespace Ecommerce.Models
                     OrderStatus = OrderStatus.NotSet;
                     Number = 0;
                     DeliveryAddressID = "";
+                    PaymentOption = PaymentOption.NotSet;
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)
@@ -89,13 +91,15 @@ namespace Ecommerce.Models
                     Sql.Append(" Client_ID,");
                     Sql.Append(" Date,");
                     Sql.Append(" Status,");
-                    Sql.Append(" DeliveryAddress_ID");
+                    Sql.Append(" DeliveryAddress_ID,");
+                    Sql.Append(" PaymentOption");
                     Sql.Append(" ) values (");
                     Sql.Append(" '" + Key.SanitizeInput() + "',");
                     Sql.Append(" '" + ClientID.SanitizeInput() + "',");
                     Sql.Append(" '" + DateTime.ToDBDate() + "',");
                     Sql.Append(" " + (int)OrderStatus + ",");
-                    Sql.Append(" '" + DeliveryAddressID.SanitizeInput() + "'");
+                    Sql.Append(" '" + DeliveryAddressID.SanitizeInput() + "',");
+                    Sql.Append(" " + (int)PaymentOption + "");
                     Sql.Append(" )");
 
                     return ExecuteNonQuery(Sql.ToString());
@@ -141,6 +145,7 @@ namespace Ecommerce.Models
                 OrderStatus = (OrderStatus)Enum.Parse(typeof(OrderStatus), Data["Status"].ToString());
                 DeliveryAddressID = Data["DeliveryAddress_ID"].ToString();
                 Number = Convert.ToInt32(Data["Number"].ToString());
+                PaymentOption = (PaymentOption)Enum.Parse(typeof(PaymentOption), Data["PaymentOption"].ToString());
             }
             catch (Exception Ex)
             {
@@ -159,7 +164,8 @@ namespace Ecommerce.Models
                 Sql.Append(" Date,");
                 Sql.Append(" Status,");
                 Sql.Append(" DeliveryAddress_ID,");
-                Sql.Append(" Number");
+                Sql.Append(" Number,");
+                Sql.Append(" PaymentOption");
                 Sql.Append(" from [ORDER]");
                 return Sql.ToString();
             }
@@ -203,6 +209,7 @@ namespace Ecommerce.Models
                             OrderStatus = (OrderStatus)Enum.Parse(typeof(OrderStatus), OrderDR["Status"].ToString()),
                             DeliveryAddressID = OrderDR["DeliveryAddress_ID"].ToString(),
                             Number = Convert.ToInt32(OrderDR["Number"].ToString()),
+                            PaymentOption = (PaymentOption)Enum.Parse(typeof(PaymentOption), OrderDR["PaymentOption"].ToString()),
                         };
                         Orders.Add(Order);
                     }

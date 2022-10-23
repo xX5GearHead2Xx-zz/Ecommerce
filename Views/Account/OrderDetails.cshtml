@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Order Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<Review> ClientReviews = new Client(Model.ClientID).Reviews;
 }
 <div style="height:50px"></div>
 <body id="page-top">
@@ -48,7 +47,6 @@
                                                     <th>Quantity</th>
                                                     <th>Price</th>
                                                     <th>Total</th>
-                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -63,28 +61,6 @@
                                                         <td>@OrderProductLink.Quantity</td>
                                                         <td>@OrderProductLink.ItemPrice</td>
                                                         <td>@(OrderProductLink.ItemPrice * OrderProductLink.Quantity)</td>
-                                                        @{
-                                                            bool PreviouslyReviewed = false;
-                                                            string ReviewID = "";
-                                                        }
-
-                                                        @foreach (Review ClientReview in ClientReviews)
-                                                        {
-                                                            if (ClientReview.ProductID == OrderProductLink.ProductID && Model.OrderStatus == Enums.OrderStatus.Shipped)
-                                                            {
-                                                                PreviouslyReviewed = true;
-                                                                ReviewID = ClientReview.Key;
-                                                            }
-                                                        }
-
-                                                        @if (Model.OrderStatus == Enums.OrderStatus.Shipped && !PreviouslyReviewed)
-                                                        {
-                                                            <td>@Html.ActionLink("Review", "WriteReview", "Account", new {@ProductID = Product.Key.Encrypt() }, new {@class="btn btn-primary btn-sm"})</td>
-                                                        }
-                                                        else if(PreviouslyReviewed)
-                                                        {
-                                                            <td>@Html.ActionLink("Review", "EditReview", "Account", new { @ReviewID = ReviewID.Encrypt() }, new { @class = "btn btn-primary btn-sm shadow w-100" })</td>
-                                                        }
                                                     </tr>
                                                 }
                                             </tbody>

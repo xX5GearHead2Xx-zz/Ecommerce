@@ -1,4 +1,6 @@
-﻿using Ecommerce.Models;
+﻿using Azure.Communication.Email;
+using Azure.Communication.Email.Models;
+using Ecommerce.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using static Ecommerce.Models.Enums;
 
@@ -30,7 +33,15 @@ namespace Ecommerce.Controllers
             }
         }
 
-        public class MyObject
+        public List<string> CompanyEmails
+        {
+            get
+            {
+                return Startup.StaticConfiguration["EmailSettings:CompanyEmails"].Split(',').ToList();
+            }
+        }
+
+        public class RecaptchaObject
         {
             public string success { get; set; }
         }
@@ -48,7 +59,7 @@ namespace Ecommerce.Controllers
                     using (StreamReader readStream = new StreamReader(wResponse.GetResponseStream()))
                     {
                         string jsonResponse = readStream.ReadToEnd();
-                        MyObject data = JsonConvert.DeserializeObject<MyObject>(jsonResponse);// Deserialize Json
+                        RecaptchaObject data = JsonConvert.DeserializeObject<RecaptchaObject>(jsonResponse);// Deserialize Json
 
                         Valid = Convert.ToBoolean(data.success);
                     }
@@ -101,33 +112,22 @@ namespace Ecommerce.Controllers
             return Options;
         }
 
-        public async Task<bool> SendEmail(string Subject, string Message, string ClientEmail, bool IsHtml)
+        public bool SendEmail(string Subject, string Message, List<string> Recipients)
         {
             try
             {
-                string SiteEmail = Startup.StaticConfiguration["EmailSettings:SupportEmail"].ToString();
-                string SitePassword = Startup.StaticConfiguration["EmailSettings:SupportPassword"].ToString();
-
-                var smtp = new SmtpClient
+                string connectionString = Startup.StaticConfiguration["EmailSettings:ConnectionString"];
+                EmailClient EmailClient = new EmailClient(connectionString);
+                EmailContent emailContent = new EmailContent(Subject);
+                emailContent.Html = Message;
+                List<EmailAddress> emailAddresses = new List<EmailAddress>();
+                foreach (string Address in Recipients)
                 {
-                    Host = "smtp-mail.outlook.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(SiteEmail, SitePassword)
-                };
-                using (var mess = new MailMessage(SiteEmail, SiteEmail)
-                {
-                    Subject = Subject,
-                    Body = Message,
-                    IsBodyHtml = IsHtml,
-                })
-                {
-                    mess.CC.Add(new MailAddress(ClientEmail));
-                    smtp.Send(mess);
+                    emailAddresses.Add(new EmailAddress(Address) { DisplayName = Address });
                 }
-
+                EmailRecipients emailRecipients = new EmailRecipients(emailAddresses);
+                EmailMessage emailMessage = new EmailMessage(Startup.StaticConfiguration["EmailSettings:SiteEmail"], emailContent, emailRecipients);
+                SendEmailResult emailResult = EmailClient.Send(emailMessage, CancellationToken.None);
                 return true;
             }
             catch
@@ -136,7 +136,7 @@ namespace Ecommerce.Controllers
             }
         }
 
-        public async Task<string> RenderViewToStringAsync(Controller controller, string viewNamePath)
+        public string RenderViewToStringAsync(Controller controller, string viewNamePath)
         {
             if (string.IsNullOrEmpty(viewNamePath))
                 viewNamePath = controller.ControllerContext.ActionDescriptor.ActionName;
@@ -158,7 +158,7 @@ namespace Ecommerce.Controllers
                         new HtmlHelperOptions()
                     );
 
-                    await viewResult.View.RenderAsync(viewContext);
+                    viewResult.View.RenderAsync(viewContext);
 
                     return writer.GetStringBuilder().ToString();
                 }

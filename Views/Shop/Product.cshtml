@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Product";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<Review> ProductReviews = Model.Reviews;
     List<ProductSpecification> ProductSpecs = Model.Specifications;
 }
 <style>
@@ -144,7 +143,6 @@
                     <div>
                         <ul class="nav nav-tabs" id="myTab">
                             <li class="nav-item"><a class="nav-link active" role="tab" data-toggle="tab" id="Specifications-Tab" href="#specifications">Specifications</a></li>
-                            <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" id="Reviews-Tab" href="#reviews">Reviews (@ProductReviews.Count())</a></li>
                         </ul>
                         <div class="tab-content" id="content">
                             <div class="tab-pane active fade show" role="tabpanel" id="specifications">
@@ -187,31 +185,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade show" role="tabpanel" id="reviews">
-
-                                @if (ProductReviews.Count() > 0)
-                                {
-                                    @foreach (var Review in ProductReviews)
-                                    {
-                                        <div class="card shadow mt-2">
-                                            <div class="card-header">@Review.Title</div>
-
-                                            <div class="card-body">@Review.Description</div>
-                                            <div class="card-footer">
-                                                @{
-                                                    int Rate = Review.Rating;
-                                                }
-                                                @while (Rate > 0)
-                                                {
-                                                    Rate--;
-                                                    <i class="icon-star"></i>
-                                                }
-                                            </div>
-                                        </div>
-                                        <hr />
-                                    }
-                                }
                             </div>
                         </div>
                     </div>

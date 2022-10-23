@@ -34,11 +34,11 @@ namespace Ecommerce.Models
         }
         public int Order { get; set; }
         #endregion
-        public ProductImage(string Key = "")
+        public ProductImage(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     ProductID = "";
@@ -47,7 +47,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

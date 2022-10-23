@@ -24,11 +24,11 @@ namespace Ecommerce.Models
         public string Checksum { get; set; }
 
         #endregion
-        public TransactionLog(string Key = "")
+        public TransactionLog(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     OrderID = "";
@@ -43,7 +43,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)
@@ -166,7 +166,7 @@ namespace Ecommerce.Models
                 Sql.Append(" PayRequestID,");
                 Sql.Append(" Checksum");
                 Sql.Append(" from TransactionLog");
-                return GetReadSql();
+                return Sql.ToString();
             }
             public static List<TransactionLog> GetOrderTransactions(string OrderID)
             {

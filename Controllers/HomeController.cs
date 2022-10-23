@@ -26,10 +26,12 @@ namespace Ecommerce.Controllers
         }
 
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendContactEmail(IFormCollection Details)
+        public IActionResult SendContactEmail(IFormCollection Details)
         {
             ViewBag.Message = Details["Message"].ToString();
-            if (await SendEmail(Details["Subject"], await RenderViewToStringAsync(this, "~/Views/EmailTemplates/Contact.cshtml"), Details["Email"], true))
+            List<string> Emails = new List<string>() { Details["Email"] };
+            Emails.AddRange(CompanyEmails);
+            if (SendEmail(Details["Subject"], RenderViewToStringAsync(this, "~/Views/EmailTemplates/Contact.cshtml"), Emails))
             {
                 return RedirectToAction("Contact", new { Success = "Message sent successfully" });
             }

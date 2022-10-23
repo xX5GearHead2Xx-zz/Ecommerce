@@ -39,3 +39,4 @@ obj/Debug/netcoreapp3.1/_IsIncrementalBuild
 *.g.cs
 *.lock
 *.exe
+*.1

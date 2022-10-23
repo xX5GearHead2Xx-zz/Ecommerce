@@ -15,11 +15,11 @@ namespace Ecommerce.Models
         public string Value { get; set; }
         public string ProductID { get; set; }
         #endregion
-        public ProductSpecification(string Key = "")
+        public ProductSpecification(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     Description = "";
@@ -28,7 +28,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)

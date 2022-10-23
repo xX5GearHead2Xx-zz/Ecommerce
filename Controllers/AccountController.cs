@@ -239,7 +239,7 @@ namespace Ecommerce.Controllers
         }
 
         [ValidateAntiForgeryToken, HttpPost]
-        public async Task<IActionResult> StartPasswordRecovery(IFormCollection Details)
+        public IActionResult StartPasswordRecovery(IFormCollection Details)
         {
             if (ValidateRecaptcha(Details["Captcha"].ToString()))
             {
@@ -249,7 +249,7 @@ namespace Ecommerce.Controllers
                     Recovery.ClientID = Client.Methods.GetClientIDFromEmail(Details["Email"].ToString());
                     Recovery.Save();
                     ViewBag.RecoveryLink = Startup.StaticConfiguration["SiteInfo:URL"].ToString() + "/Account/ResetPassword?RecoveryID=" + Recovery.Key;
-                    if (await SendEmail("Password Recovery", await RenderViewToStringAsync(this, "~/Views/EmailTemplates/PasswordRecovery.cshtml"), Details["Email"].ToString(), true))
+                    if (SendEmail("Password Recovery", RenderViewToStringAsync(this, "~/Views/EmailTemplates/PasswordRecovery.cshtml"), new List<string> { Details["Email"].ToString() }))
                     {
                         return RedirectToAction("RecoverPassword", new { Success = "Please check your email for the recovery link" });
                     }
@@ -342,56 +342,6 @@ namespace Ecommerce.Controllers
             return View("~/Views/Account/OrderDetails.cshtml", Order);
         }
 
-        #region "Reviews"
-        [Authorize(Roles = "Shopper,Admin")]
-        public IActionResult WriteReview(string ProductID)
-        {
-            Product Product = new Product(ProductID.Decrypt());
-            return View("~/Views/Account/WriteReview.cshtml", Product);
-        }
-
-        [ValidateAntiForgeryToken, HttpPost, Authorize(Roles = "Shopper,Admin")]
-        public IActionResult CreateReview(IFormCollection Details, string ProductID)
-        {
-            Review Review = new Review();
-            Review.Title = Details["Title"].ToString();
-            Review.Rating = Convert.ToInt32(Details["Rating"].ToString());
-            Review.Description = Details["Description"].ToString();
-            Review.ClientID = ClientID;
-            Review.ProductID = ProductID.Decrypt();
-            Review.Save();
-            return RedirectToAction("Manage", new { Success = "Review created successfully", @Section = Enums.AccountSection.Reviews });
-        }
-
-        [Authorize(Roles = "Shopper,Admin")]
-        public IActionResult EditReview(string ReviewID)
-        {
-            Review Review = new Review(ReviewID.Decrypt());
-            return View("~/Views/Account/EditReview.cshtml", Review);
-        }
-
-        [ValidateAntiForgeryToken, HttpPost, Authorize(Roles = "Shopper,Admin")]
-        public IActionResult UpdateReview(IFormCollection Details, string ReviewID)
-        {
-            Review Review = new Review(ReviewID.Decrypt());
-            Review.Title = Details["Title"].ToString();
-            Review.Rating = Convert.ToInt32(Details["Rating"].ToString());
-            Review.Description = Details["Description"].ToString();
-            Review.ClientID = ClientID;
-            Review.Save();
-            return RedirectToAction("Manage", new { Success = "Review updated successfully", @Section = Enums.AccountSection.Reviews });
-        }
-
-        [Authorize(Roles = "Shopper,Admin")]
-        public IActionResult DeleteReview(string ReviewID)
-        {
-            Review Review = new Review(ReviewID.Decrypt());
-            Review.Delete();
-            return RedirectToAction("Manage", new { Success = "Review deleted successfully", @Section = Enums.AccountSection.Reviews });
-        }
-
-        #endregion
-
         #region "Wishlists"
         [Authorize(Roles = "Shopper,Admin")]
         public IActionResult CreateWishlist(IFormCollection Details)
@@ -415,7 +365,7 @@ namespace Ecommerce.Controllers
         public IActionResult DeleteWishlist(string WishlistID)
         {
             Wishlist Wishlist = new Wishlist(WishlistID.Decrypt());
-            foreach(WishlistItem Item in Wishlist.Items)
+            foreach (WishlistItem Item in Wishlist.Items)
             {
                 Item.Delete();
             }

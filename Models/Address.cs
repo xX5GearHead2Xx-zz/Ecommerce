@@ -19,11 +19,11 @@ namespace Ecommerce.Models
         public int ZipCode { get; set; }
         public string Country { get; set; }
         #endregion
-        public Address(string Key = "")
+        public Address(string key = "")
         {
             try
             {
-                if (string.IsNullOrEmpty(Key))
+                if (string.IsNullOrEmpty(key))
                 {
                     Key = "";
                     AddressLine = "";
@@ -35,7 +35,7 @@ namespace Ecommerce.Models
                 }
                 else
                 {
-                    DataRowToClass(Read(Key));
+                    DataRowToClass(Read(key));
                 }
             }
             catch (Exception Ex)
