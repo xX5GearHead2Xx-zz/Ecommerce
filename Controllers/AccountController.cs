@@ -206,12 +206,14 @@ namespace Ecommerce.Controllers
         public IActionResult AddAddress(IFormCollection Details)
         {
             Address Address = new Address();
+            Address.PropertyType = (Enums.PropertyType)Convert.ToInt32(Details["PropertyType"].ToString());
             Address.AddressLine = Details["AddressLine"].ToString();
             Address.ZipCode = Convert.ToInt32(Details["ZipCode"].ToString());
             Address.City = Details["City"].ToString();
-            Address.Province = Details["Province"].ToString();
-            Address.Country = Details["Country"].ToString();
+            Address.Province = (Enums.Province)Convert.ToInt32(Details["Province"].ToString());
             Address.Suburb = Details["Suburb"].ToString();
+            Address.ContactNumber = Details["ContactNumber"].ToString();
+            Address.DeliveryInstructions = Details["DeliveryInstructions"].ToString();
             Address.ClientID = ClientID;
             if (Address.Save())
             {

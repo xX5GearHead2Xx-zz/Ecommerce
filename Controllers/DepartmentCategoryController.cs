@@ -13,18 +13,10 @@ namespace Ecommerce.Controllers
     [Authorize(Roles = "Admin")]
     public class DepartmentCategoryController : BaseController
     {
-        public IActionResult ViewDepartments(bool Error, bool Success, string Message = "")
+        public IActionResult ViewDepartments(string Error = "", string Success = "")
         {
-            if (Error)
-            {
-                ViewBag.Error = Message;
-            }
-
-            if (Success)
-            {
-                ViewBag.Success = Message;
-            }
-
+            ViewBag.Error = Error;
+            ViewBag.Success = Success;
             return View("~/Views/Dashboard/DepartmentsAndCategories.cshtml", GetDepartments());
         }
 
@@ -93,6 +85,43 @@ namespace Ecommerce.Controllers
             }
             Message.Append("Category could not be hidden");
             return RedirectToAction("ViewDepartments", new { Message = Message, Error = true });
+        }
+
+        public IActionResult EditDepartment(IFormCollection Details)
+        {
+            if (!string.IsNullOrEmpty(Details["EditDepartmentID"].ToString()))
+            {
+                ProductDepartment Department = new ProductDepartment(Details["EditDepartmentID"].ToString());
+                //Make sure that the old department loaded
+                if (!string.IsNullOrEmpty(Department.Description))
+                {
+                    Department.Description = Details["EditDepartmentName"].ToString();
+                    Department.Save();
+
+                    return RedirectToAction("ViewDepartments", new { Success = "Department updated successfully" });
+                }
+            }
+
+            return RedirectToAction("ViewDepartments", new { Success = "Something went wrong while updating the department" });
+        }
+
+        public IActionResult EditCategory(IFormCollection Details)
+        {
+
+            if (!string.IsNullOrEmpty(Details["EditCategoryID"].ToString()))
+            {
+                ProductCategory Category = new ProductCategory(Details["EditCategoryID"].ToString());
+                //Make sure that the old category loaded
+                if (!string.IsNullOrEmpty(Category.Description))
+                {
+                    Category.Description = Details["EditCategoryName"].ToString();
+                    Category.Save();
+
+                    return RedirectToAction("ViewDepartments", new { Success = "Category updated successfully" });
+                }
+            }
+
+            return RedirectToAction("ViewDepartments", new { Success = "Something went wrong while updating the category" });
         }
     }
 }

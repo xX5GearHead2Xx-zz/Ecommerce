@@ -48,5 +48,27 @@ namespace Ecommerce.Models
             Paygate,
             Manual
         }
+
+        public enum Province
+        {
+            Unknown = -1,
+            Gauteng,
+            CapeTown,
+            FreeState,
+            EasternCape,
+            Limpopo,
+            Mpumalanga,
+            KwazuluNatal,
+            NorthernCape,
+            NorthWest,
+            WesternCape
+        }
+
+        public enum PropertyType
+        {
+            Unknown = -1,
+            Residential,
+            Business,
+        }
     }
 }

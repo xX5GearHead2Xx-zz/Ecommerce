@@ -20,12 +20,13 @@ namespace Ecommerce.Models
 
         public static string ToDBDate(this DateTime Date)
         {
-            return Date.ToString("yyyy-MM-dd HH:mm:ss");
+            //Add hours to convert from universal time to local time
+            return Date.AddHours(2).ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static string ToDBDate(this DateTime? Date)
         {
-            if(Date.HasValue)
+            if (Date.HasValue)
             {
                 return Convert.ToDateTime(Date).ToString("yyyy-MM-dd HH:mm:ss");
             }

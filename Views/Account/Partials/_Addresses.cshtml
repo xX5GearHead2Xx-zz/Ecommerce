@@ -2,16 +2,27 @@
 @model Client
 <div class="tab-pane fade show active" role="tabpanel" id="Addresses" aria-labelledby="Addresses-Tab">
     <div class="row">
-          <div class="col-md-7">
+        <div class="col-md-7">
             <h4>Create Address</h4>
             <hr />
+            <div class="alert alert-info">Please note we only deliver in South Africa</div>
             @using (Html.BeginForm("AddAddress", "Account", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Street & Number</label>
+                            <label>property Type</label>
+                            <select name="PropertyType" class="form-control" required>
+                                <option value="">Select</option>
+                                <option value="0">Residential</option>
+                                <option value="1">Business</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Street Address</label>
                             <input type="text" class="form-control" name="AddressLine" maxlength="250" required />
                         </div>
                     </div>
@@ -27,8 +38,6 @@
                             <input type="number" class="form-control" name="ZipCode" max="10000" required />
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>City</label>
@@ -38,13 +47,32 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Province</label>
-                            <input type="text" class="form-control" name="Province" maxlength="250" required />
+                            <select name="Province" class="form-control" required>
+                                <option value="">Select</option>
+                                <option value="0">Gauteng</option>
+                                <option value="1">Western Cape</option>
+                                <option value="2">Free State</option>
+                                <option value="3">Eastern Cape</option>
+                                <option value="4">Limpopo</option>
+                                <option value="5">Mpumalanga</option>
+                                <option value="6">Kwazulu-Natal</option>
+                                <option value="7">Northern Cape</option>
+                                <option value="8">North West</option>
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Country</label>
-                            <input type="text" class="form-control" name="Country" maxlength="250" required />
+                            <label>Contact Number</label>
+                            <input type="number" class="form-control" name="ContactNumber" maxlength="250" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Delivery Instructions</label>
+                            <textarea name="DeliveryInstructions" class="form-control"></textarea>
                         </div>
                     </div>
                 </div>
@@ -72,12 +100,13 @@
                     @foreach (Address Address in ClientAddresses)
                     {
                         <div class="mb-3 border-bottom">
+                            <p>@Address.PropertyType</p>
                             <p>@Address.AddressLine</p>
                             <p>@Address.Suburb</p>
                             <p>@Address.City</p>
-                            <p>@Address.Province</p>
-                            <p>@Address.Country</p>
+                            <p>@Address.ProvinceDescription</p>
                             <p>@Address.ZipCode</p>
+                            <p>@Address.DeliveryInstructions</p>
                             <p>@Html.ActionLink("Delete", "DeleteAddress", "Account", new { @AddressID = Address.Key.Encrypt() }, new { @class = "btn btn-sm btn-danger w-100" })</p>
                         </div>
                     }

@@ -15,9 +15,18 @@ namespace Ecommerce.Models
         public string AddressLine { get; set; }
         public string Suburb { get; set; }
         public string City { get; set; }
-        public string Province { get; set; }
+        public Province Province { get; set; }
+        public string ProvinceDescription
+        {
+            get
+            {
+                return Methods.GetProvinceDescription(Province);
+            }
+        }
         public int ZipCode { get; set; }
-        public string Country { get; set; }
+        public string DeliveryInstructions { get; set; }
+        public string ContactNumber { get; set; }
+        public PropertyType PropertyType { get; set; }
         #endregion
         public Address(string key = "")
         {
@@ -29,9 +38,11 @@ namespace Ecommerce.Models
                     AddressLine = "";
                     Suburb = "";
                     City = "";
-                    Province = "";
+                    Province = Province.Unknown;
                     ZipCode = 0;
-                    Country = "";
+                    DeliveryInstructions = "";
+                    ContactNumber = "";
+                    PropertyType = PropertyType.Unknown;
                 }
                 else
                 {
@@ -77,16 +88,20 @@ namespace Ecommerce.Models
                     Sql.Append(" City,");
                     Sql.Append(" Province,");
                     Sql.Append(" ZipCode,");
-                    Sql.Append(" Country");
+                    Sql.Append(" DeliveryInstructions,");
+                    Sql.Append(" ContactNumber,");
+                    Sql.Append(" PropertyType");
                     Sql.Append(" ) values (");
                     Sql.Append(" '" + Key.SanitizeInput() + "',");
                     Sql.Append(" '" + ClientID.SanitizeInput() + "',");
                     Sql.Append(" '" + AddressLine.SanitizeInput() + "',");
                     Sql.Append(" '" + Suburb.SanitizeInput() + "',");
                     Sql.Append(" '" + City.SanitizeInput() + "',");
-                    Sql.Append(" '" + Province.SanitizeInput() + "',");
+                    Sql.Append(" '" + (int)Province + "',");
                     Sql.Append(" " + ZipCode + ",");
-                    Sql.Append(" '" + Country.SanitizeInput() + "'");
+                    Sql.Append("'" + DeliveryInstructions + "',");
+                    Sql.Append("'" + ContactNumber + "',");
+                    Sql.Append("" + (int)PropertyType + "");
                     Sql.Append(" )");
 
                     return ExecuteNonQuery(Sql.ToString());
@@ -99,9 +114,11 @@ namespace Ecommerce.Models
                     Sql.Append(" AddressLine = '" + AddressLine.SanitizeInput() + "',");
                     Sql.Append(" Suburb = '" + Suburb.SanitizeInput() + "',");
                     Sql.Append(" City = '" + City.SanitizeInput() + "',");
-                    Sql.Append(" Province = '" + Province.SanitizeInput() + "',");
+                    Sql.Append(" Province = '" + (int)Province + "',");
                     Sql.Append(" ZipCode = " + ZipCode + ",");
-                    Sql.Append(" Country = '" + Country.SanitizeInput() + "'");
+                    Sql.Append(" DeliveryInstructions = " + DeliveryInstructions.SanitizeInput() + ",");
+                    Sql.Append(" ContactNumber = " + ContactNumber.SanitizeInput() + ",");
+                    Sql.Append(" PropertyType = " + (int)PropertyType + "");
                     Sql.Append(" where Address_ID = '" + Key.SanitizeInput() + "'");
 
                     return ExecuteNonQuery(Sql.ToString());
@@ -139,9 +156,11 @@ namespace Ecommerce.Models
                 AddressLine = Data["AddressLine"].ToString();
                 Suburb = Data["Suburb"].ToString();
                 City = Data["City"].ToString();
-                Province = Data["Province"].ToString();
+                Province = (Province)Convert.ToInt32(Data["Province"].ToString());
                 ZipCode = Convert.ToInt32(Data["ZipCode"].ToString());
-                Country = Data["Country"].ToString();
+                DeliveryInstructions = Data["DeliveryInstructions"].ToString();
+                ContactNumber = Data["ContactNumber"].ToString();
+                PropertyType = (PropertyType)Convert.ToInt32(Data["PropertyType"]);
             }
             catch (Exception Ex)
             {
@@ -162,7 +181,9 @@ namespace Ecommerce.Models
                 Sql.Append(" City,");
                 Sql.Append(" Province,");
                 Sql.Append(" ZipCode,");
-                Sql.Append(" Country");
+                Sql.Append(" DeliveryInstructions,");
+                Sql.Append(" ContactNumber,");
+                Sql.Append(" PropertyType");
                 Sql.Append(" from Address");
                 return Sql.ToString();
             }
@@ -190,6 +211,20 @@ namespace Ecommerce.Models
                 catch (Exception Ex)
                 {
                     throw new Exception("Models > Address > GetClientAddresses " + Ex.Message);
+                }
+            }
+
+            public static string GetProvinceDescription(Province ProvinceID)
+            {
+                try
+                {
+                    StringBuilder Sql = new StringBuilder();
+                    Sql.Append("select Description from ReferenceProvince where Province_ID = '" + (int)ProvinceID + "'");
+                    return ExecuteScalar(Sql.ToString());
+                }
+                catch (Exception Ex)
+                {
+                    throw new Exception("Models > Address > GetProvinceDescription " + Ex.Message);
                 }
             }
         }

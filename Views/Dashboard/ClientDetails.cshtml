@@ -5,7 +5,7 @@
 }
 <div style="height:50px"></div>
 <body id="page-top">
-    <div id="wrapper">
+    <div class="container" id="wrapper">
         <div class="d-flex flex-column" id="content-wrapper">
             <div id="content">
                 <div class="container-fluid">
@@ -29,11 +29,13 @@
                                     <div class="tab-content" id="nav-tabContent">
                                         <div class="tab-pane fade show active" role="tabpanel" id="Addresses" aria-labelledby="Addresses-Tab">
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-12">
                                                     <h4>Address List</h4>
                                                     <hr />
                                                     <div style="max-height:500px" class="overflow-auto">
-                                                        @{List<Address> ClientAddresses = Model.Addresses;}
+                                                        @{
+                                                            List<Address> ClientAddresses = Model.Addresses;
+                                                        }
 
                                                         @if (ClientAddresses.Count == 0)
                                                         {
@@ -43,13 +45,14 @@
                                                         {
                                                             @foreach (Address Address in ClientAddresses)
                                                             {
-                                                                <div class="border mb-2 bg-light shadow">
+                                                                <div class="border mb-2 bg-light">
+                                                                    <p>@Address.PropertyType</p>
                                                                     <p>@Address.AddressLine</p>
                                                                     <p>@Address.Suburb</p>
                                                                     <p>@Address.City</p>
-                                                                    <p>@Address.Province</p>
-                                                                    <p>@Address.Country</p>
+                                                                    <p>@Address.ProvinceDescription</p>
                                                                     <p>@Address.ZipCode</p>
+                                                                    <p>@Address.DeliveryInstructions</p>
                                                                     <p>@Html.ActionLink("Delete Address", "DeleteAddress", "Account", new { @AddressID = Address.Key }, new { @class = "btn btn-sm btn-danger w-100" })</p>
                                                                 </div>
                                                             }
@@ -62,7 +65,9 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <h4>Order History</h4>
-                                                    @{List<Order> ClientOrders = Model.Orders;}
+                                                    @{
+                                                        List<Order> ClientOrders = Model.Orders;
+                                                    }
 
                                                     @if (ClientOrders.Count == 0)
                                                     {
@@ -104,4 +109,5 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>

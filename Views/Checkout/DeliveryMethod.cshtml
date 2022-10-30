@@ -10,6 +10,7 @@
             <div class="block-heading mt-2">
                 <h2 class="text-info">Delivery Method</h2>
             </div>
+            @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
             @using (Html.BeginForm("ProceedToPayment", "Payment", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
@@ -31,19 +32,21 @@
                                     <div class="row border mt-2 p-3">
                                         <div class="col-md-8 col-10">
                                             <p class="item">
+                                                @Address.PropertyType<br />
                                                 @Address.AddressLine<br />
                                                 @Address.City<br />
-                                                @Address.Province<br />
-                                                @Address.Country<br />
-                                                @Address.ZipCode
+                                                @Address.ProvinceDescription<br />
+                                                @Address.ZipCode<br />
+                                                @Address.ContactNumber<br />
+                                                @Address.DeliveryInstructions
                                             </p>
                                         </div>
                                         <div class="col-md-4 col-2">
                                             <input class="form-check-input" type="radio" name="DeliveryAddress" id="Radio_@Address.Key" value="@Address.Key" required>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-block shadow mt-3" type="submit" style="border-radius:0">Proceed To Confirmation</button>
                                 }
+                                <button class="btn btn-primary btn-block shadow mt-3" type="submit" style="border-radius:0">Proceed To Confirmation</button>
                             }
                             else
                             {

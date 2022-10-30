@@ -17,8 +17,9 @@ namespace Ecommerce.Controllers
     public class PaymentController : BaseController
     {
         [Authorize(Roles = "Shopper,Admin")]
-        public IActionResult ProceedToCheckout()
+        public IActionResult ProceedToCheckout(string Error = "")
         {
+            ViewBag.Error = Error;
             List<Address> Addresses = Address.Methods.GetClientAddresses(ClientID);
             return View("~/Views/Checkout/DeliveryMethod.cshtml", Addresses);
         }
@@ -165,7 +166,11 @@ namespace Ecommerce.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("ProceedToCheckout");
+                    StringBuilder ErrorMessage = new StringBuilder();
+                    ErrorMessage.Append("Your transaction could not be processed: ");
+                    ErrorMessage.Append(TransactionLog.Description);
+
+                    return RedirectToAction("ProceedToCheckout", new { Error = ErrorMessage });
                 }
             }
             else

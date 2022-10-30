@@ -20,11 +20,13 @@
                             @{
                                 Address OrderAddress = new Address(Model.DeliveryAddressID);
                             }
+                            @OrderAddress.PropertyType<br />
                             @OrderAddress.AddressLine<br />
                             @OrderAddress.City<br />
-                            @OrderAddress.Province<br />
-                            @OrderAddress.Country<br />
-                            @OrderAddress.ZipCode
+                            @OrderAddress.ProvinceDescription<br />
+                            @OrderAddress.ZipCode<br />
+                            @OrderAddress.ContactNumber<br />
+                            @OrderAddress.DeliveryInstructions
                         </p>
                     </div>
                     <div class="col-md-9">

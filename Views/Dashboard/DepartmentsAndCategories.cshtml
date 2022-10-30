@@ -17,7 +17,7 @@
                             @await Html.PartialAsync("~/Views/Shared/ErrorAlert.cshtml")
                             @await Html.PartialAsync("~/Views/Shared/SuccessAlert.cshtml")
                             <div class="row">
-                                  <div class="col-md-4">
+                                <div class="col-md-4">
                                     @using (Html.BeginForm("CreateDepartment", "DepartmentCategory", FormMethod.Post))
                                     {
                                         @Html.AntiForgeryToken()
@@ -65,12 +65,20 @@
                                                 @foreach (ProductDepartment ProductDepartment in Model)
                                                 {
                                                     <tr>
-                                                        <td style="font-weight:bold">@ProductDepartment.Description @Html.ActionLink(ProductDepartment.Hidden ? "Unhide" : "Hide", "HideUnhideDepartment", "DepartmentCategory", new { @DepartmentID = ProductDepartment.Key, @MarkAsHidden = !ProductDepartment.Hidden}, new { @class = "btn btn-dark btn-sm float-right"}) </td>
+                                                        <td style="font-weight:bold">
+                                                            @ProductDepartment.Description
+                                                            <button onclick="EditDepartment(this)" class="btn btn-link btn-sm" type="button" DepartmentID="@ProductDepartment.Key" DepartmentName="@ProductDepartment.Description">Edit</button>
+                                                        </td>
+                                                        <td>@Html.ActionLink(ProductDepartment.Hidden ? "Unhide" : "Hide", "HideUnhideDepartment", "DepartmentCategory", new { @DepartmentID = ProductDepartment.Key, @MarkAsHidden = !ProductDepartment.Hidden}, new { @class = "btn btn-dark btn-sm float-right"}) </td>
                                                     </tr>
                                                     @foreach (ProductCategory ProductCategory in ProductDepartment.ProductCategories)
                                                     {
                                                         <tr>
-                                                            <td>@ProductCategory.Description @Html.ActionLink(ProductCategory.Hidden ? "Unhide" : "Hide", "HideUnhideCategory", "DepartmentCategory", new { @CategoryID = ProductCategory.Key, @MarkAsHidden = !ProductCategory.Hidden }, new { @class = "btn btn-dark btn-sm float-right" })</td>
+                                                            <td>
+                                                                @ProductCategory.Description
+                                                                <button class="btn btn-link btn-sm" type="button" CategoryID="@ProductCategory.Key" CategoryName="@ProductCategory.Description" onclick="EditCategory(this)">Edit</button>
+                                                            </td>
+                                                            <td> @Html.ActionLink(ProductCategory.Hidden ? "Unhide" : "Hide", "HideUnhideCategory", "DepartmentCategory", new { @CategoryID = ProductCategory.Key, @MarkAsHidden = !ProductCategory.Hidden }, new { @class = "btn btn-dark btn-sm float-right" })</td>
                                                         </tr>
                                                     }
                                                 }
@@ -78,7 +86,6 @@
                                         </table>
                                     </div>
                                 </div>
-                              
                             </div>
                         </div>
                     </div>
@@ -86,3 +93,74 @@
             </div>
         </div>
 </body>
+
+<!-- Modal -->
+<div class="modal fade" id="DepartmentModal" tabindex="-1" aria-labelledby="DepartmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DepartmentModalLabel">Edit Department</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("EditDepartment", "DepartmentCategory", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <label class="form-label">Department Name</label>
+                    <input type="text" name="EditDepartmentName" id="EditDepartmentName" class="form-control" required />
+                    <input type="hidden" name="EditDepartmentID" id="EditDepartmentID" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="CategoryModal" tabindex="-1" aria-labelledby="CategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CategoryModalLabel">Edit Category</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("EditCategory", "DepartmentCategory", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <label class="form-label">Category Name</label>
+                    <input type="text" name="EditCategoryName" id="EditCategoryName" class="form-control" required />
+                    <input type="hidden" name="EditCategoryID" id="EditCategoryID" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function EditDepartment(element) {
+        var DepartmentID = $(element).attr('DepartmentID');
+        var DepartmentName = $(element).attr('DepartmentName');
+        $('#EditDepartmentID').val(DepartmentID);
+        $('#EditDepartmentName').val(DepartmentName);
+        $('#DepartmentModal').modal('show');
+    }
+
+    function EditCategory(element) {
+        var CategoryID = $(element).attr('CategoryID');
+        var CategoryName = $(element).attr('CategoryName');
+        $('#EditCategoryID').val(CategoryID);
+        $('#EditCategoryName').val(CategoryName);
+        $('#CategoryModal').modal('show');
+    }
+</script>

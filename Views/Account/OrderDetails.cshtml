@@ -28,12 +28,14 @@
                                         Address DeliveryAddress = Model.DeliveryAddress;
                                     }
                                     <div class="mb-2 p-2">
+                                        <p><b>PropertyType</b> @DeliveryAddress.PropertyType</p>
                                         <p><b>Address</b> @DeliveryAddress.AddressLine</p>
                                         <p><b>Suburb</b> @DeliveryAddress.Suburb</p>
                                         <p><b>City</b> @DeliveryAddress.City</p>
-                                        <p><b>Province</b> @DeliveryAddress.Province</p>
-                                        <p><b>Country</b> @DeliveryAddress.Country</p>
+                                        <p><b>Province</b> @DeliveryAddress.ProvinceDescription</p>
                                         <p><b>Postal Code</b> @DeliveryAddress.ZipCode</p>
+                                        <p><b>Contact Number</b> @DeliveryAddress.ContactNumber</p>
+                                        <p><b>Delivery Instructions</b> @DeliveryAddress.DeliveryInstructions</p>
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-5">
