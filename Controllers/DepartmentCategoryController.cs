@@ -17,7 +17,8 @@ namespace Ecommerce.Controllers
         {
             ViewBag.Error = Error;
             ViewBag.Success = Success;
-            return View("~/Views/Dashboard/DepartmentsAndCategories.cshtml", GetDepartments());
+            List<ProductDepartment> Departments = ProductDepartment.Methods.GetProductDepartments(true);
+            return View("~/Views/Dashboard/DepartmentsAndCategories.cshtml", Departments);
         }
 
         [ValidateAntiForgeryToken, HttpPost]
@@ -53,11 +54,6 @@ namespace Ecommerce.Controllers
             }
             Message.Append("Category could not be created");
             return RedirectToAction("ViewDepartments", new { Message = Message, Error = true });
-        }
-
-        public List<ProductDepartment> GetDepartments()
-        {
-            return ProductDepartment.Methods.GetProductDepartments(true);
         }
 
         public IActionResult HideUnhideDepartment(string DepartmentID, bool MarkAsHidden)

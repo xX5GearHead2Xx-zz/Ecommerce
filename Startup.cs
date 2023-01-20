@@ -42,11 +42,6 @@ namespace Ecommerce
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
         }
 
-        public string GetConfigurationSetting(string Section, string Setting)
-        {
-            return Configuration[Section + ":" + Setting];
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
